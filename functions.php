@@ -91,3 +91,76 @@ function create_admin_user() {
 
 // Call the function to create the admin user
 add_action('init', 'create_admin_user');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+add_action('woocommerce_checkout_before_order_review', 'custom_checkout_columns_start');
+add_action('woocommerce_checkout_after_order_review', 'custom_checkout_columns_end');
+
+// Remove payment method from the left column
+remove_action('woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20);
+
+function custom_checkout_columns_start() {
+    // Start the left column for the order review
+    echo '<div class="checkout-columns">';
+    echo '<div class="checkout-left">';
+
+    // Add coupon form directly in the left column first
+    // Display coupon form first
+
+    // Display the order review (adjust as necessary)
+    echo '<h3>Your Order</h3>';
+    woocommerce_order_review(); 
+    custom_coupon_form();
+}
+
+function custom_checkout_columns_end() {
+    echo '</div>'; // Close the left column
+
+    // Start the right column for payment methods
+    echo '<div class="checkout-right">';
+    
+    // Display Payment Methods
+    echo '<h3>Payment Methods</h3>';
+    
+    // Use WooCommerce function to display payment methods
+    if (function_exists('woocommerce_checkout_payment')) {
+        woocommerce_checkout_payment();
+    }
+
+    // Close the right column and overall checkout-columns div
+    echo '</div></div>';
+}
+
+// Function to display the custom coupon form
+function custom_coupon_form() {
+    ?>
+    <div class="woocommerce-form-coupon-toggle">
+        <div class="woocommerce-info">
+            Have a coupon? <a href="#" class="showcoupon">Click here to enter your code</a>
+        </div>
+    </div>
+    <div class="coupon" style="display:none;"> <!-- Initially hidden -->
+        <p>If you have a coupon code, please apply it below.</p>
+        <p class="form-row form-row-first">
+            <label for="coupon_code" class="screen-reader-text">Coupon:</label>
+            <input type="text" name="coupon_code" class="input-text" placeholder="Coupon code" id="coupon_code" value="">
+        </p>
+        <p class="form-row form-row-last">
+            <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Apply coupon</button>
+        </p>
+    </div>
+    <?php
+}
