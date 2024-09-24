@@ -105,24 +105,68 @@ add_action('init', 'create_admin_user');
 
 
 
-
 add_action('woocommerce_checkout_before_order_review', 'custom_checkout_columns_start');
 add_action('woocommerce_checkout_after_order_review', 'custom_checkout_columns_end');
-
-// Remove payment method from the left column
 remove_action('woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20);
+remove_action('woocommerce_checkout_order_review', 'woocommerce_order_review', 10); 
+remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10); 
 
 function custom_checkout_columns_start() {
     // Start the left column for the order review
     echo '<div class="checkout-columns">';
     echo '<div class="checkout-left">';
 
-    // Add coupon form directly in the left column first
-    // Display coupon form first
+    // Display the product table
+    echo '<h3>Varukorg</h3>';
+    echo '<table class="product-table">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>Produckter</th>';
+    echo '<th>Prices in SEK</th>';
+    echo '<th>Pris i BTC</th>';
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        $_product = $cart_item['data'];
+        $product_name = $_product->get_name();
+        $price_sek = wc_price($_product->get_price()); 
+        $price_btc = get_price_in_btc($_product->get_price());
+        echo '<tr>';
+        echo '<td>' . $product_name . '</td>';
+        echo '<td>' . $price_sek . '</td>';
+        echo '<td>' . $price_btc . '</td>';
+        echo '</tr>';
+    }
+    echo '</tbody>';
+    echo '</table>';
 
-    // Display the order review (adjust as necessary)
-    echo '<h3>Your Order</h3>';
-    woocommerce_order_review(); 
+    // Add some spacing before the totals table
+    echo '<br>';
+
+    // Order Total (SEK)
+    $order_total_sek = WC()->cart->get_total(); 
+    // Order Total in BTC (use custom function)
+    $order_total_btc = get_price_in_btc(WC()->cart->get_total('edit')); 
+    echo '<table class="totals-table">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>Pris | SEK</th>';
+    echo '<th> ' . $order_total_sek . '</th>';
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
+    
+
+    echo '<tr>';
+    echo '<td> Pris | BTC</td>';
+    echo '<td>' . $order_total_btc . '</td>';
+    echo '</tr>';
+
+    echo '</tbody>';
+    echo '</table>';
+
+    // Display the coupon form
     custom_coupon_form();
 }
 
@@ -133,8 +177,8 @@ function custom_checkout_columns_end() {
     echo '<div class="checkout-right">';
     
     // Display Payment Methods
-    echo '<h3>Payment Methods</h3>';
-    
+    echo '<h3>Order ID: 123</h3>';
+    echo '<h6>Metod</h6>';
     // Use WooCommerce function to display payment methods
     if (function_exists('woocommerce_checkout_payment')) {
         woocommerce_checkout_payment();
@@ -147,20 +191,54 @@ function custom_checkout_columns_end() {
 // Function to display the custom coupon form
 function custom_coupon_form() {
     ?>
-    <div class="woocommerce-form-coupon-toggle">
-        <div class="woocommerce-info">
-            Have a coupon? <a href="#" class="showcoupon">Click here to enter your code</a>
-        </div>
-    </div>
-    <div class="coupon" style="display:none;"> <!-- Initially hidden -->
-        <p>If you have a coupon code, please apply it below.</p>
+    <div class="coupon"> <!-- Initially hidden -->
         <p class="form-row form-row-first">
             <label for="coupon_code" class="screen-reader-text">Coupon:</label>
             <input type="text" name="coupon_code" class="input-text" placeholder="Coupon code" id="coupon_code" value="">
         </p>
         <p class="form-row form-row-last">
-            <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Apply coupon</button>
+            <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Anvand</button>
         </p>
     </div>
     <?php
+}
+
+// Custom function to convert price to BTC
+function get_price_in_btc($price_in_sek) {
+    $btc_rate = 0.0000028; // Example rate, update with real BTC conversion
+    return number_format($price_in_sek * $btc_rate, 8) . ' BTC';
+}
+
+// Add custom text and icon before payment method label
+add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
+add_filter('woocommerce_gateway_description', 'custom_payment_gateway_description', 0, 2);
+
+function custom_payment_gateway_icon($icon, $gateway_id) {
+    $custom_icons = array(
+        'blockonomics'   => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/brands/bitcoin.svg" alt="Bitcoin" style="width:24px; margin-right:8px;">',
+        'highriskshop-instant-payment-gateway-wert' => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/credit-card.svg" alt="Kortbetalning" style="width:24px; margin-right:8px;">',
+        'payment-today' => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/money-check-alt.svg" alt="Kortbetalning (+10% avgift)" style="width:24px; margin-right:8px;">',
+    );
+
+    // Check if there's an icon for the current gateway
+    if (isset($custom_icons[$gateway_id])) {
+        $icon = $custom_icons[$gateway_id] . $icon;
+    }
+
+    return $icon;
+}
+
+function custom_payment_gateway_description($description, $gateway_id) {
+    // Add custom description text after each label
+    $custom_texts = array(
+        'blockonomics'   => '<p style="color: #888;">Pay securely with Bitcoin.</p>',
+        'highriskshop-instant-payment-gateway-wert' => '<p style="color: #888;">Instant payment with a high-risk gateway.</p>',
+        'payment-today' => '<p style="color: #888;">Pay with credit card (+10% fee).</p>',
+    );
+
+    if (isset($custom_texts[$gateway_id])) {
+        $description .= $custom_texts[$gateway_id];
+    }
+
+    return $description;
 }
