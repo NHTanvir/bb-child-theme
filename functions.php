@@ -5,7 +5,7 @@ function my_custom_scripts() {
         'custom-script', 
         get_stylesheet_directory_uri() . '/js/custom-script.js', 
         array('jquery'), 
-        null, 
+        time(), 
         true
     );
 }
@@ -112,7 +112,9 @@ remove_action('woocommerce_checkout_order_review', 'woocommerce_order_review', 1
 remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10); 
 
 function custom_checkout_columns_start() {
-    // Start the left column for the order review
+    // Get the selected payment method from WooCommerce session
+    $selected_payment_method = WC()->session->get('chosen_payment_method');
+
     echo '<div class="checkout-columns">';
     echo '<div class="checkout-left">';
 
@@ -121,60 +123,88 @@ function custom_checkout_columns_start() {
     echo '<table class="product-table">';
     echo '<thead>';
     echo '<tr>';
-    echo '<th>Produckter</th>';
+    echo '<th>Produkter</th>';
     echo '<th>Prices in SEK</th>';
-    echo '<th>Pris i BTC</th>';
+    if ($selected_payment_method === 'blockonomics') {
+        echo '<th>Pris i BTC</th>'; 
+    }
     echo '</tr>';
     echo '</thead>';
     echo '<tbody>';
+    $_total_price_sek = 0;
+    
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
-        $price_sek = wc_price($_product->get_price()); 
+        $price_sek = $_product->get_price(); 
         $price_btc = get_price_in_btc($_product->get_price());
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
-        echo '<td>' . $price_sek . '</td>';
-        echo '<td>' . $price_btc . '</td>';
+        echo '<td>' . wc_price ( $_product->get_price(), ['currency' => 'SEK'] ) . '</td>';
+        if ($selected_payment_method === 'blockonomics') {
+            echo '<td>' . $price_btc . '</td>'; // Only show BTC price if Bitcoin is selected
+        }
         echo '</tr>';
+        $_total_price_sek += $_product->get_price();
     }
+
     echo '</tbody>';
     echo '</table>';
 
     // Add some spacing before the totals table
     echo '<br/><br/>';
-    // Order Total (SEK)
-    $order_total_sek = WC()->cart->get_total(); 
-    // Order Total in BTC (use custom function)
-    $order_total_btc = get_price_in_btc(WC()->cart->get_total('edit')); 
-    echo '<div class="total-section">';
-    echo '<table class="totals-table">';
-    echo '<thead>';
 
-    echo '</thead>';
-    echo '<tbody>';
+    // Get order total (SEK)
+    $order_total_sek = WC()->cart->get_total('edit'); 
+    $order_total_sek_numeric = floatval(preg_replace('/[^\d.]/', '', $order_total_sek));
+    $fee_amount = get_feeeeee($_total_price_sek, 10); // 10% fee amount
     
-    echo '<tr>';
-    echo '<td>Pris | SEK</td>';
-    echo '<td> ' . $order_total_sek . '</td>';
-    echo '</tr>';
-    echo '<tr>';
-    echo '<td> Pris | BTC</td>';
-    echo '<td>' . $order_total_btc . '</td>';
-    echo '</tr>';
-
-    echo '</tbody>';
-    echo '</table>';
-    echo '</div>';
-    
+    if ($selected_payment_method === 'blockonomics') {
+        // Bitcoin selected, show BTC price
+        $order_total_btc = get_price_in_btc($order_total_sek_numeric);
+        echo '<div class="total-section">';
+        echo '<table class="totals-table">';
+        echo '<tbody>';
+        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
+        echo '<tr><td>Pris | BTC</td><td>' . $order_total_btc. '</td></tr>';
+        echo '</tbody>';
+        echo '</table>';
+        echo '</div>';
+    } else {
+        echo '<div class="total-section">';
+        echo '<table class="totals-table">';
+        echo '<tbody>';
+        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
+        echo '<tr><td>Kortavgift - 10%</td><td>' . wc_price($fee_amount , ['currency' => 'SEK'] ) . '</td></tr>'; 
+        echo '<tr><td>Totalt | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
+        echo '</tbody>';
+        echo '</table>';
+        echo '</div>';
+    }
     // Display the coupon form
     custom_coupon_form();
     echo '</div>'; // Close the left column
 }
 
+// Function to apply a fee (in this case, 10%)
+function get_feeeeee($price, $fee_percentage) {
+    $price = intval($price);
+    $fee_amount = ($price / 100) * $fee_percentage;
+    return $fee_amount;
+}
+
+// Function to convert SEK to BTC
+function get_price_in_btc($price_sek) {
+    // Implement your conversion logic here, using exchange rate
+    $btc_exchange_rate = 0.000034; // Example exchange rate
+    return number_format($price_sek * $btc_exchange_rate, 8) . ' BTC';
+}
+
+
+
 function custom_checkout_columns_end() {
 
-
+    $selected_payment_method = WC()->session->get('chosen_payment_method');
     // Start the right column for payment methods
     echo '<div class="checkout-right">';
     
@@ -186,8 +216,42 @@ function custom_checkout_columns_end() {
         woocommerce_checkout_payment();
     }
 
-    // Close the right column and overall checkout-columns div
+    if( $selected_payment_method === 'blockonomics' ) {
+        $mics_style ='display:block';
+        $bit_style ='display:none';
+    }
+    else{
+        $mics_style ='display:none';
+        $bit_style ='display:block';
+
+    }
+    echo '<div class="blockonomics-payments-message" style="'.$mics_style.'">';
+    echo "<p>";
+    echo "Den totala summan i Bitcoin.";
+    echo "</p>";
+    echo '</div>';
+
+    echo '<div class="normal-payments-message" style="'.$bit_style.'">';
+    echo "<p>";
+    echo "normal payments.";
+    echo "</p>";
+    echo '</div>';
+    
+
+
     echo '</div></div>';
+
+    if( $selected_payment_method === 'blockonomics' ) {
+        $style ='display:block';
+    }
+    else{
+        $style ='display:none';
+    }
+    echo '<div class="bitcoin-payments-message-below" style="'.$style.'">';
+    echo "<p>";
+    echo "Den totala summan i Bitcoin.";
+    echo "</p>";
+    echo '</div>';
 }
 
 // Function to display the custom coupon form
@@ -202,11 +266,6 @@ function custom_coupon_form() {
     <?php
 }
 
-// Custom function to convert price to BTC
-function get_price_in_btc($price_in_sek) {
-    $btc_rate = 0.0000028; // Example rate, update with real BTC conversion
-    return number_format($price_in_sek * $btc_rate, 8) . ' BTC';
-}
 
 // Add custom text and icon before payment method label
 add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
@@ -241,3 +300,88 @@ function custom_payment_gateway_description($description, $gateway_id) {
 
     return $description;
 }
+
+add_action('wp_ajax_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
+add_action('wp_ajax_nopriv_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
+
+function update_cart_totals_on_payment_method_change() {
+    // Get the selected payment method from the AJAX request
+    $selected_payment_method = sanitize_text_field($_POST['payment_method']);
+
+    $_total_price_sek = 0;
+
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        $_product = $cart_item['data'];
+        $product_name = $_product->get_name();
+        $price_sek = wc_price($_product->get_price(),['currency' => 'SEK'] ); 
+        $price_btc = get_price_in_btc($_product->get_price());
+        $_total_price_sek += $_product->get_price();
+    }
+
+
+    $order_total_sek = WC()->cart->get_total('edit'); // Total in SEK
+    $fee_amount = get_feeeeee($_total_price_sek, 10); // 10% fee amount
+    $order_total_sek_numeric = floatval(preg_replace('/[^\d.]/', '', $order_total_sek));
+    $grand_total = $order_total_sek_numeric + $fee_amount;
+
+    // Output the table based on the selected payment method
+    if ($selected_payment_method === 'blockonomics') {
+        // Bitcoin selected, show BTC price
+        $order_total_btc = get_price_in_btc($order_total_sek_numeric);
+        echo '<table class="totals-table">';
+        echo '<tbody>';
+        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
+        echo '<tr><td>Pris | BTC</td><td>' .$order_total_btc . '</td></tr>';
+        echo '</tbody>';
+        echo '</table>';
+    } else{
+
+        echo '<table class="totals-table">';
+        echo '<tbody>';
+        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
+        echo '<tr><td>Kortavgift - 10%</td><td>' . wc_price($fee_amount , ['currency' => 'SEK']) . '</td></tr>'; // Display the fee
+        echo '<tr><td>Totalt | SEK</td><td>' . wc_price( $grand_total,  ['currency' => 'SEK']  ) . '</td></tr>'; // Total price including fee
+        echo '</tbody>';
+        echo '</table>';
+
+    }
+
+    wp_die(); // Terminate the request
+}
+
+add_action('wp_ajax_update_table_on_payment_method_change', 'update_table_on_payment_method_change');
+add_action('wp_ajax_nopriv_update_table_on_payment_method_change', 'update_table_on_payment_method_change');
+
+function update_table_on_payment_method_change() {
+    $selected_payment_method = sanitize_text_field($_POST['payment_method']);
+
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>Produkter</th>';
+    echo '<th>Prices in SEK</th>';
+    if ($selected_payment_method === 'blockonomics') {
+        echo '<th>Pris i BTC</th>'; 
+    }
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
+    
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        $_product = $cart_item['data'];
+        $product_name = $_product->get_name();
+        $price_sek = wc_price($_product->get_price(),['currency' => 'SEK'] ); 
+        $price_btc = get_price_in_btc($_product->get_price());
+        echo '<tr>';
+        echo '<td>' . $product_name . '</td>';
+        echo '<td>' . $price_sek . '</td>';
+        if ($selected_payment_method === 'blockonomics') {
+            echo '<td>' . $price_btc . '</td>'; // Only show BTC price if Bitcoin is selected
+        }
+        echo '</tr>';
+    }
+
+    echo '</tbody>';
+    wp_die(); // Terminate the request
+
+}
+
