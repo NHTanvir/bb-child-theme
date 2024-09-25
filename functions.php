@@ -142,22 +142,22 @@ function custom_checkout_columns_start() {
     echo '</table>';
 
     // Add some spacing before the totals table
-    echo '<br>';
-
+    echo '<br/><br/>';
     // Order Total (SEK)
     $order_total_sek = WC()->cart->get_total(); 
     // Order Total in BTC (use custom function)
     $order_total_btc = get_price_in_btc(WC()->cart->get_total('edit')); 
+    echo '<div class="total-section">';
     echo '<table class="totals-table">';
     echo '<thead>';
-    echo '<tr>';
-    echo '<th>Pris | SEK</th>';
-    echo '<th> ' . $order_total_sek . '</th>';
-    echo '</tr>';
+
     echo '</thead>';
     echo '<tbody>';
     
-
+    echo '<tr>';
+    echo '<td>Pris | SEK</td>';
+    echo '<td> ' . $order_total_sek . '</td>';
+    echo '</tr>';
     echo '<tr>';
     echo '<td> Pris | BTC</td>';
     echo '<td>' . $order_total_btc . '</td>';
@@ -165,20 +165,22 @@ function custom_checkout_columns_start() {
 
     echo '</tbody>';
     echo '</table>';
-
+    echo '</div>';
+    
     // Display the coupon form
     custom_coupon_form();
+    echo '</div>'; // Close the left column
 }
 
 function custom_checkout_columns_end() {
-    echo '</div>'; // Close the left column
+
 
     // Start the right column for payment methods
     echo '<div class="checkout-right">';
     
     // Display Payment Methods
     echo '<h3>Order ID: 123</h3>';
-    echo '<h6>Metod</h6>';
+    echo '<h6 class="method">Metod</h6>';
     // Use WooCommerce function to display payment methods
     if (function_exists('woocommerce_checkout_payment')) {
         woocommerce_checkout_payment();
@@ -192,11 +194,8 @@ function custom_checkout_columns_end() {
 function custom_coupon_form() {
     ?>
     <div class="coupon"> <!-- Initially hidden -->
-        <p class="form-row form-row-first">
-            <label for="coupon_code" class="screen-reader-text">Coupon:</label>
-            <input type="text" name="coupon_code" class="input-text" placeholder="Coupon code" id="coupon_code" value="">
-        </p>
-        <p class="form-row form-row-last">
+        <p class="form-row">
+            <input type="text" name="coupon_code" class="input-text" placeholder="Rabattkod" id="coupon_code" value="">
             <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Anvand</button>
         </p>
     </div>
@@ -215,9 +214,9 @@ add_filter('woocommerce_gateway_description', 'custom_payment_gateway_descriptio
 
 function custom_payment_gateway_icon($icon, $gateway_id) {
     $custom_icons = array(
-        'blockonomics'   => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/brands/bitcoin.svg" alt="Bitcoin" style="width:24px; margin-right:8px;">',
+        'blockonomics'   => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">Bitcoin</span><p class="payment-discription">10-60 min</p>',
         'highriskshop-instant-payment-gateway-wert' => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/credit-card.svg" alt="Kortbetalning" style="width:24px; margin-right:8px;">',
-        'payment-today' => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/money-check-alt.svg" alt="Kortbetalning (+10% avgift)" style="width:24px; margin-right:8px;">',
+        'payment-today' => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">Kort</span><p class="payment-discription">Direkt</p>',
     );
 
     // Check if there's an icon for the current gateway
