@@ -227,7 +227,7 @@ function custom_checkout_columns_end() {
     }
     echo '<div class="blockonomics-payments-message" style="'.$mics_style.'">';
     echo "<p>";
-    echo "Den totala summan i Bitcoin.";
+    echo "När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida. ";
     echo "</p>";
     echo '</div>';
 
@@ -248,8 +248,8 @@ function custom_checkout_columns_end() {
         $style ='display:none';
     }
     echo '<div class="bitcoin-payments-message-below" style="'.$style.'">';
-    echo "<p>";
-    echo "Den totala summan i Bitcoin.";
+    echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
+    echo "Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.";
     echo "</p>";
     echo '</div>';
 }
