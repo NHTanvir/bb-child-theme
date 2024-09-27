@@ -7,6 +7,25 @@ jQuery(document).ready(function ($) {
             update_totals_based_on_payment_method();
         }
     );
+    function updateBodyClass() {
+        var selectedMethod = $('input[name="payment_method"]:checked').val();
+
+        // Remove previous payment method classes
+        $('body').removeClass(function(index, className) {
+            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
+        });
+
+        // Add the new payment method class
+        $('body').addClass('payment-method-' + selectedMethod);
+    }
+
+    // Initial call to set the class on page load
+    updateBodyClass();
+
+    // Change event to update class when payment method is changed
+    $('form.woocommerce-checkout').on('change', 'input[name="payment_method"]', function() {
+        updateBodyClass();
+    })
 
     function update_totals_based_on_payment_method() {
         var selected_payment_method = $(

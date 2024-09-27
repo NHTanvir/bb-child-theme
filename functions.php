@@ -179,7 +179,7 @@ function custom_checkout_columns_end() {
 
     echo '<div class="checkout-right">';
     
-    echo '<h3>Order ID: 123</h3>';
+    echo '<h3>Order ID: ' . do_shortcode('[order-id]') . '</h3>';
     echo '<h6 class="method">Metod</h6>';
     if (function_exists('woocommerce_checkout_payment')) {
         woocommerce_checkout_payment();
@@ -194,19 +194,6 @@ function custom_checkout_columns_end() {
         $bit_style ='display:block';
 
     }
-    echo '<div class="blockonomics-payments-message" style="'.$mics_style.'">';
-    echo "<p>";
-    echo "När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida. ";
-    echo "</p>";
-    echo '</div>';
-
-    echo '<div class="normal-payments-message" style="'.$bit_style.'">';
-    echo "<p>";
-    echo "normal payments.";
-    echo "</p>";
-    echo '</div>';
-    
-
 
     echo '</div></div>';
 
@@ -222,6 +209,47 @@ function custom_checkout_columns_end() {
     echo "</p>";
     echo '</div>';
 }
+
+function add_custom_payment_message() {
+    $selected_payment_method = WC()->session->get('chosen_payment_method');
+
+    if( $selected_payment_method === 'blockonomics' ) {
+        $mics_style = 'display:block';
+        $bit_style = 'display:none';
+    } else {
+        $mics_style = 'display:none';
+        $bit_style = 'display:block';
+    }
+
+
+    echo '<div class="blockonomics-payments-message" style="'.$mics_style.'">';
+        echo "<h3>Totala Avgifter</h3>";
+        echo '<div>';
+            echo '<div>';
+                echo "Vortavgift";
+            echo '</div>';
+            echo '<div>';
+                echo "10%";
+            echo '</div>'; 
+        echo '</div>';
+        echo "<p>När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida.</p>";
+    echo '</div>';
+
+    // Normal Payment Message
+    echo '<div class="normal-payments-message" style="'.$bit_style.'">'; // Changed class name for clarity
+        echo "<h3>Totala Avgifter</h3>";
+        echo '<div>';
+            echo '<div>';
+                echo "Abgift Beroen";
+            echo '</div>';
+            echo '<div>';
+                echo "100-400 SEK";
+            echo '</div>';
+        echo '</div>';
+        echo "<p>This is normal payment.</p>";
+    echo '</div>';
+}
+add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
 
 // Function to display the custom coupon form
 function custom_coupon_form() {
@@ -334,4 +362,17 @@ function update_table_on_payment_method_change() {
     wp_die(); // Terminate the request
 
 }
+
+add_filter('body_class', 'add_payment_method_class');
+
+function add_payment_method_class($classes) {
+    $selected_payment_method = WC()->session->get('chosen_payment_method');
+
+    if ($selected_payment_method) {
+        $classes[] = 'payment-method-' . esc_attr($selected_payment_method);
+    }
+
+    return $classes;
+}
+
 
