@@ -222,31 +222,32 @@ function add_custom_payment_message() {
     }
 
 
-    echo '<div class="blockonomics-payments-message" style="'.$mics_style.'">';
-        echo "<h3>Totala Avgifter</h3>";
-        echo '<div>';
-            echo '<div>';
-                echo "Vortavgift";
+    echo '<div class="blockonomics-payments-info" style="'.$mics_style.'">';
+        echo '<h6 class="method">Total avgifter</h6>';
+        echo '<div class="fee-table">';
+            echo '<div class="fee-title">';
+                echo "Avgift beroende på börs:";
             echo '</div>';
-            echo '<div>';
-                echo "10%";
+            echo '<div class="fee-price">';
+                echo "100-400 SEK";
             echo '</div>'; 
         echo '</div>';
-        echo "<p>När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida.</p>";
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png">När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida.<br/><br/>Skickar du från din egen wallet så ansvarar du själv för avgifterna! Instruktioner ser du på nästa sida.</p>';
     echo '</div>';
 
     // Normal Payment Message
-    echo '<div class="normal-payments-message" style="'.$bit_style.'">'; // Changed class name for clarity
-        echo "<h3>Totala Avgifter</h3>";
-        echo '<div>';
-            echo '<div>';
-                echo "Abgift Beroen";
+    echo '<div class="blockonomics-payments-info" style="'.$bit_style.'">'; // Changed class name for clarity
+        echo '<h6 class="method">Total avgifter</h6>';
+        echo '<div class="fee-table">';
+            echo '<div class="fee-title">';
+                echo "Kortavgift";
             echo '</div>';
-            echo '<div>';
-                echo "100-400 SEK";
+            echo '<div class="fee-price">';
+                echo "10%";
             echo '</div>';
         echo '</div>';
-        echo "<p>This is normal payment.</p>";
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png"><b>OBS! Alla kortbetalningar genomförs i € (Euro).</b> Dina kortuppgifter är alltid säkra när du slutför ett köp hos oss. Vi kan aldrig se dina kortuppgifter!</p>';
+    echo '</div>';
     echo '</div>';
 }
 add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
@@ -264,12 +265,10 @@ function custom_coupon_form() {
 }
 
 add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
-add_filter('woocommerce_gateway_description', 'custom_payment_gateway_description', 0, 2);
 
 function custom_payment_gateway_icon($icon, $gateway_id) {
     $custom_icons = array(
         'blockonomics'   => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">Bitcoin</span><p class="payment-discription">10-60 min</p>',
-        'highriskshop-instant-payment-gateway-wert' => '<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/credit-card.svg" alt="Kortbetalning" style="width:24px; margin-right:8px;">',
         'payment-today' => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">Kort</span><p class="payment-discription">Direkt</p>',
     );
 
@@ -280,20 +279,6 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
     return $icon;
 }
 
-function custom_payment_gateway_description($description, $gateway_id) {
-    // Add custom description text after each label
-    $custom_texts = array(
-        'blockonomics'   => '<p style="color: #888;">Pay securely with Bitcoin.</p>',
-        'highriskshop-instant-payment-gateway-wert' => '<p style="color: #888;">Instant payment with a high-risk gateway.</p>',
-        'payment-today' => '<p style="color: #888;">Pay with credit card (+10% fee).</p>',
-    );
-
-    if (isset($custom_texts[$gateway_id])) {
-        $description .= $custom_texts[$gateway_id];
-    }
-
-    return $description;
-}
 
 add_action('wp_ajax_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
 add_action('wp_ajax_nopriv_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
@@ -376,3 +361,20 @@ function add_payment_method_class($classes) {
 }
 
 
+add_filter('woocommerce_order_button_text', 'custom_woocommerce_order_button_text', 9999999999);
+
+function custom_woocommerce_order_button_text($button_text) {
+    // Get the chosen payment method from WooCommerce session
+    $chosen_payment_method = WC()->session->get('chosen_payment_method');
+
+    // Change the button text based on the selected payment method
+    if ($chosen_payment_method === 'blockonomics') {
+        $button_text = 'Pay with Bitcoinssss';
+    } elseif ($chosen_payment_method === 'payment-today') {
+        $button_text = 'Pay with Credit Card (+10% Fee)';
+    } else {
+        $button_text = 'Place Order';
+    }
+
+    return $button_text;
+}
