@@ -131,42 +131,30 @@ function custom_checkout_columns_start() {
     echo '</tr>';
     echo '</thead>';
     echo '<tbody>';
-    $_total_price_sek = 0;
     
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
-        $price_sek = $_product->get_price(); 
-        $price_btc = get_price_in_btc($_product->get_price());
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
-        echo '<td>' . wc_price ( $_product->get_price(), ['currency' => 'SEK'] ) . '</td>';
+        echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
-            echo '<td>' . $price_btc . '</td>'; // Only show BTC price if Bitcoin is selected
+            echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
         }
         echo '</tr>';
-        $_total_price_sek += $_product->get_price();
     }
 
     echo '</tbody>';
     echo '</table>';
 
-    // Add some spacing before the totals table
     echo '<br/><br/>';
-
-    // Get order total (SEK)
-    $order_total_sek = WC()->cart->get_total('edit'); 
-    $order_total_sek_numeric = floatval(preg_replace('/[^\d.]/', '', $order_total_sek));
-    $fee_amount = get_feeeeee($_total_price_sek, 10); // 10% fee amount
     
     if ($selected_payment_method === 'blockonomics') {
-        // Bitcoin selected, show BTC price
-        $order_total_btc = get_price_in_btc($order_total_sek_numeric);
         echo '<div class="total-section">';
         echo '<table class="totals-table">';
         echo '<tbody>';
-        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
-        echo '<tr><td>Pris | BTC</td><td>' . $order_total_btc. '</td></tr>';
+        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+        echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
         echo '</tbody>';
         echo '</table>';
         echo '</div>';
@@ -174,44 +162,25 @@ function custom_checkout_columns_start() {
         echo '<div class="total-section">';
         echo '<table class="totals-table">';
         echo '<tbody>';
-        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
-        echo '<tr><td>Kortavgift - 10%</td><td>' . wc_price($fee_amount , ['currency' => 'SEK'] ) . '</td></tr>'; 
-        echo '<tr><td>Totalt | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
+        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+        echo '<tr><td>Kortavgift - 10%</td><td>' . do_shortcode('[total-fee-sek]') . '</td></tr>'; 
+        echo '<tr><td>Totalt</td><td>' . do_shortcode('[total-price-eur]') . '</td></tr>';
         echo '</tbody>';
         echo '</table>';
         echo '</div>';
     }
-    // Display the coupon form
     custom_coupon_form();
-    echo '</div>'; // Close the left column
+    echo '</div>'; 
 }
-
-// Function to apply a fee (in this case, 10%)
-function get_feeeeee($price, $fee_percentage) {
-    $price = intval($price);
-    $fee_amount = ($price / 100) * $fee_percentage;
-    return $fee_amount;
-}
-
-// Function to convert SEK to BTC
-function get_price_in_btc($price_sek) {
-    // Implement your conversion logic here, using exchange rate
-    $btc_exchange_rate = 0.000034; // Example exchange rate
-    return number_format($price_sek * $btc_exchange_rate, 8) . ' BTC';
-}
-
-
 
 function custom_checkout_columns_end() {
 
     $selected_payment_method = WC()->session->get('chosen_payment_method');
-    // Start the right column for payment methods
+
     echo '<div class="checkout-right">';
     
-    // Display Payment Methods
     echo '<h3>Order ID: 123</h3>';
     echo '<h6 class="method">Metod</h6>';
-    // Use WooCommerce function to display payment methods
     if (function_exists('woocommerce_checkout_payment')) {
         woocommerce_checkout_payment();
     }
@@ -266,8 +235,6 @@ function custom_coupon_form() {
     <?php
 }
 
-
-// Add custom text and icon before payment method label
 add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
 add_filter('woocommerce_gateway_description', 'custom_payment_gateway_description', 0, 2);
 
@@ -278,7 +245,6 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
         'payment-today' => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">Kort</span><p class="payment-discription">Direkt</p>',
     );
 
-    // Check if there's an icon for the current gateway
     if (isset($custom_icons[$gateway_id])) {
         $icon = $custom_icons[$gateway_id] . $icon;
     }
@@ -305,48 +271,34 @@ add_action('wp_ajax_update_cart_totals_on_payment_method_change', 'update_cart_t
 add_action('wp_ajax_nopriv_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
 
 function update_cart_totals_on_payment_method_change() {
-    // Get the selected payment method from the AJAX request
-    $selected_payment_method = sanitize_text_field($_POST['payment_method']);
 
-    $_total_price_sek = 0;
+    $selected_payment_method = sanitize_text_field($_POST['payment_method']);
 
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
-        $price_sek = wc_price($_product->get_price(),['currency' => 'SEK'] ); 
-        $price_btc = get_price_in_btc($_product->get_price());
-        $_total_price_sek += $_product->get_price();
     }
 
-
-    $order_total_sek = WC()->cart->get_total('edit'); // Total in SEK
-    $fee_amount = get_feeeeee($_total_price_sek, 10); // 10% fee amount
-    $order_total_sek_numeric = floatval(preg_replace('/[^\d.]/', '', $order_total_sek));
-    $grand_total = $order_total_sek_numeric + $fee_amount;
-
-    // Output the table based on the selected payment method
     if ($selected_payment_method === 'blockonomics') {
-        // Bitcoin selected, show BTC price
-        $order_total_btc = get_price_in_btc($order_total_sek_numeric);
+
         echo '<table class="totals-table">';
         echo '<tbody>';
-        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
-        echo '<tr><td>Pris | BTC</td><td>' .$order_total_btc . '</td></tr>';
+        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+        echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
         echo '</tbody>';
         echo '</table>';
     } else{
 
         echo '<table class="totals-table">';
         echo '<tbody>';
-        echo '<tr><td>Pris | SEK</td><td>' . wc_price( $_total_price_sek, ['currency' => 'SEK'] ) . '</td></tr>';
-        echo '<tr><td>Kortavgift - 10%</td><td>' . wc_price($fee_amount , ['currency' => 'SEK']) . '</td></tr>'; // Display the fee
-        echo '<tr><td>Totalt | SEK</td><td>' . wc_price( $grand_total,  ['currency' => 'SEK']  ) . '</td></tr>'; // Total price including fee
+        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+        echo '<tr><td>Kortavgift - 10%</td><td>' . do_shortcode('[total-fee-sek]') . '</td></tr>'; 
+        echo '<tr><td>Totalt</td><td>' . do_shortcode('[total-price-eur]') . '</td></tr>';
         echo '</tbody>';
         echo '</table>';
 
     }
-
-    wp_die(); // Terminate the request
+    wp_die();
 }
 
 add_action('wp_ajax_update_table_on_payment_method_change', 'update_table_on_payment_method_change');
@@ -369,13 +321,11 @@ function update_table_on_payment_method_change() {
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
-        $price_sek = wc_price($_product->get_price(),['currency' => 'SEK'] ); 
-        $price_btc = get_price_in_btc($_product->get_price());
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
-        echo '<td>' . $price_sek . '</td>';
+        echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
-            echo '<td>' . $price_btc . '</td>'; // Only show BTC price if Bitcoin is selected
+            echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
         }
         echo '</tr>';
     }
