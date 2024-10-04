@@ -7,25 +7,37 @@ jQuery(document).ready(function ($) {
             update_totals_based_on_payment_method();
         }
     );
-    function updateBodyClass() {
-        var selectedMethod = $('input[name="payment_method"]:checked').val();
-
-        // Remove previous payment method classes
-        $('body').removeClass(function(index, className) {
-            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
-        });
-
-        // Add the new payment method class
-        $('body').addClass('payment-method-' + selectedMethod);
+        function updatePaymentMethodClass() {
+        $('input[name="payment_method"]:checked').closest('li').addClass('payment-active');
     }
+function updateBodyClass() {
+    var selectedMethod = $('input[name="payment_method"]:checked').val();
+
+    $('body').removeClass(function(index, className) {
+        return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
+    });
+
+    if (selectedMethod === 'blockonomics') {
+        $('body').addClass('payment-method-blockonomics');
+    } else {
+        $('body').addClass('payment-method-card');
+    }
+}
+
 
     // Initial call to set the class on page load
     updateBodyClass();
 
     // Change event to update class when payment method is changed
     $('form.woocommerce-checkout').on('change', 'input[name="payment_method"]', function() {
+         updatePaymentMethodClass();
         updateBodyClass();
-    })
+    });
+    
+        $(document.body).on('updated_checkout', function() {
+        // Reapply the class to the selected payment method
+        updatePaymentMethodClass();
+    });
 
     function update_totals_based_on_payment_method() {
         var selected_payment_method = $(
