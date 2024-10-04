@@ -123,8 +123,8 @@ function custom_checkout_columns_start() {
     echo '<table class="product-table">';
     echo '<thead>';
     echo '<tr>';
-    echo '<th>Produkter</th>';
-    echo '<th>Prices in SEK</th>';
+    echo '<th>Produkt</th>';
+    echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
         echo '<th>Pris i BTC</th>'; 
     }
@@ -135,6 +135,10 @@ function custom_checkout_columns_start() {
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
+        if ($_product->is_type('variation')) {
+            $variation_data = $_product->get_variation_attributes();
+            $product_name = reset($variation_data);
+        }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
@@ -179,7 +183,7 @@ function custom_checkout_columns_end() {
 
     echo '<div class="checkout-right">';
     
-    echo '<h3>Order ID: ' . do_shortcode('[order-id]') . '</h3>';
+    echo '<h3>Betalning</h3>';
     echo '<h6 class="method">Metod</h6>';
     if (function_exists('woocommerce_checkout_payment')) {
         woocommerce_checkout_payment();
@@ -203,7 +207,7 @@ function custom_checkout_columns_end() {
     else{
         $style ='display:none';
     }
-    echo '<div class="bitcoin-payments-message-below" style="'.$style.'">';
+    echo '<div class="bitcoin-payments-message-below dis-none" style="'.$style.'">';
     echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
     echo "Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.";
     echo "</p>";
@@ -232,8 +236,13 @@ function add_custom_payment_message() {
                 echo "100-400 SEK";
             echo '</div>'; 
         echo '</div>';
-        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png">När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida.<br/><br/>Skickar du från din egen wallet så ansvarar du själv för avgifterna! Instruktioner ser du på nästa sida.</p>';
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png">Med detta alternativ genomförs transaktionen i valutan $ (Dollar). Du köper USDC som sedan skickas till oss per automatik.<br/><br/>Om detta betalningsalternativ inte fungerar för dig så kan du skapa en ny order och välja något av våra andra alternativ.</p>';
+   echo '<div class="bitcoin-payments-message-below" style="'.$style.'">';
+    echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
+    echo "Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.";
+    echo "</p>";
     echo '</div>';
+    echo '<a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a></div>';
 
     // Normal Payment Message
     echo '<div class="blockonomics-payments-info" style="'.$bit_style.'">'; // Changed class name for clarity
@@ -246,7 +255,7 @@ function add_custom_payment_message() {
                 echo "10%";
             echo '</div>';
         echo '</div>';
-        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png"><b>OBS! Alla kortbetalningar genomförs i € (Euro).</b> Dina kortuppgifter är alltid säkra när du slutför ett köp hos oss. Vi kan aldrig se dina kortuppgifter!</p>';
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png">Om du blir ombedd att verifiera din identitet så tar vi INTE del utav denna information. Dina personuppgifter hanteras med högsta säkerhet!</p><a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a>';
     echo '</div>';
     echo '</div>';
 }
@@ -255,10 +264,10 @@ add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message
 // Function to display the custom coupon form
 function custom_coupon_form() {
     ?>
-    <div class="coupon"> <!-- Initially hidden -->
+    <div class="coupon" id="coupon-section"> <!-- Initially hidden -->
         <p class="form-row">
             <input type="text" name="coupon_code" class="input-text" placeholder="Rabattkod" id="coupon_code" value="">
-            <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Anvand</button>
+            <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Använd</button>
         </p>
     </div>
     <?php
@@ -266,14 +275,12 @@ function custom_coupon_form() {
 
 add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
 
-function custom_payment_gateway_icon($icon, $gateway_id) {
-    $custom_icons = array(
-        'blockonomics'   => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">Bitcoin</span><p class="payment-discription">10-60 min</p>',
-        'payment-today' => '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">Kort</span><p class="payment-discription">Direkt</p>',
-    );
 
-    if (isset($custom_icons[$gateway_id])) {
-        $icon = $custom_icons[$gateway_id] . $icon;
+function custom_payment_gateway_icon($icon, $gateway_id) {
+    if ($gateway_id === 'blockonomics') {
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">Bitcoin</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>';
+    } else {
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">Kort</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-14.png">Direkt</p>';
     }
 
     return $icon;
@@ -322,8 +329,8 @@ function update_table_on_payment_method_change() {
 
     echo '<thead>';
     echo '<tr>';
-    echo '<th>Produkter</th>';
-    echo '<th>Prices in SEK</th>';
+    echo '<th>Produkt</th>';
+    echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
         echo '<th>Pris i BTC</th>'; 
     }
@@ -365,12 +372,12 @@ add_filter('woocommerce_order_button_text', 'custom_woocommerce_order_button_tex
 
 function custom_woocommerce_order_button_text($button_text) {
     // Get the chosen payment method from WooCommerce session
-    $chosen_payment_method = WC()->session->get('chosen_payment_method');
+    $chosen_payment_method = WC()->session->get('chosen_payment_method'); 
 
     // Change the button text based on the selected payment method
     if ($chosen_payment_method === 'blockonomics') {
-        $button_text = 'Pay with Bitcoinssss';
-    } elseif ($chosen_payment_method === 'payment-today') {
+        $button_text = 'Pay with Bitcoin';
+    } elseif ($chosen_payment_method === 'highriskshop-instant-payment-gateway-wert') {
         $button_text = 'Pay with Credit Card (+10% Fee)';
     } else {
         $button_text = 'Place Order';
