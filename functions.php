@@ -297,6 +297,7 @@ function update_cart_totals_on_payment_method_change() {
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
+        
     }
 
     if ($selected_payment_method === 'blockonomics') {
@@ -341,6 +342,10 @@ function update_table_on_payment_method_change() {
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
+        if ($_product->is_type('variation')) {
+            $variation_data = $_product->get_variation_attributes();
+            $product_name = reset($variation_data);
+        }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
