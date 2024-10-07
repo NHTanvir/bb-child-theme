@@ -273,10 +273,12 @@ add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
 
 
 function custom_payment_gateway_icon($icon, $gateway_id) {
+	$setting 	= get_option( "woocommerce_{$gateway_id}_settings" );
+	$title 		= $setting['title']; 
     if ($gateway_id === 'blockonomics') {
-        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">Bitcoin</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>';
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">'. $title .'</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>';
     } else {
-        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">Kort</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-14.png">Direkt</p>';
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">'. $title .'</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-14.png">Direkt</p>';
     }
 
     return $icon;
