@@ -236,12 +236,8 @@ function add_custom_payment_message() {
                 echo "100-400 SEK";
             echo '</div>'; 
         echo '</div>';
-        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png">Med detta alternativ genomförs transaktionen i valutan $ (Dollar). Du köper USDC som sedan skickas till oss per automatik.<br/><br/>Om detta betalningsalternativ inte fungerar för dig så kan du skapa en ny order och välja något av våra andra alternativ.</p>';
-   echo '<div class="bitcoin-payments-message-below" style="'.$style.'">';
-    echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
-    echo "Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.";
-    echo "</p>";
-    echo '</div>';
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png"><span>När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida.<br><br><strong>Skickar du från din egen wallet så ansvarar du själv för avgifterna! Den totala summan inkl. avgifter ser du på nästa sida.</strong></span></p>';
+   
     echo '<a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a></div>';
 
     // Normal Payment Message
@@ -255,7 +251,7 @@ function add_custom_payment_message() {
                 echo "10%";
             echo '</div>';
         echo '</div>';
-        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png">Om du blir ombedd att verifiera din identitet så tar vi INTE del utav denna information. Dina personuppgifter hanteras med högsta säkerhet!</p><a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a>';
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png"><span>Med detta alternativ genomförs transaktionen i valutan $ (Dollar). Du köper USDC som sedan skickas till oss per automatik.<br/><br/><strong>Om detta betalningsalternativ inte fungerar för dig så kan du skapa en ny order och välja något av våra andra alternativ.</strong></span></p><a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a>';
     echo '</div>';
     echo '</div>';
 }
