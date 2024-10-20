@@ -124,6 +124,7 @@ function custom_checkout_columns_start() {
     echo '<thead>';
     echo '<tr>';
     echo '<th>Produkt</th>';
+    echo '<th>Duration</th>';
     echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
         echo '<th>Pris i BTC</th>'; 
@@ -141,6 +142,7 @@ function custom_checkout_columns_start() {
         }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
+        echo '<td>' . do_shortcode('[product-duration]') . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
             echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
@@ -329,6 +331,7 @@ function update_table_on_payment_method_change() {
     echo '<thead>';
     echo '<tr>';
     echo '<th>Produkt</th>';
+    echo '<th>Duartion</th>';
     echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
         echo '<th>Pris i BTC</th>'; 
@@ -346,6 +349,7 @@ function update_table_on_payment_method_change() {
         }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
+        echo '<td>' . do_shortcode('[product-duration]') . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
             echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
