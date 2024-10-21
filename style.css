@@ -1,7 +1,7 @@
 /*
 Theme Name: Beaver Builder Child Theme
 Theme URI: http://www.wpbeaverbuilder.com
-Version: 1.1
+Version: 1.2
 Description: An example child theme that can be used as a starting point for custom development.
 Author: The Beaver Builder Team
 Author URI: http://www.fastlinemedia.com
@@ -43,4 +43,42 @@ template: bb-theme
 }
 #order_review {
     display: none;
+}
+.payment-type-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.payment-type-box label {
+    display: flex;
+    width: 100%;
+}
+
+.payment-type-box input[type="radio"] {
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.payment-type-content {
+    flex-grow: 1;
+}
+
+.payment-type-content h4 {
+    margin: 0;
+}
+
+.payment-type-content p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    color: #666;
+}
+.wc_payment_method {
+    display: none;
+}
+.payment_method_blockonomics{
+    display: block;
 }
