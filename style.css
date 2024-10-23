@@ -9,7 +9,22 @@ template: bb-theme
 */
 
 /* Add your custom styles here... */
-
+#plugin-client-modal {
+    position: fixed;
+    background: #c8c8c859;
+    top: 0;
+    border: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#plugin-client-modal-loader {
+    position: absolute;
+}
 .checkout-columns {
     display: flex;
     justify-content: space-between;

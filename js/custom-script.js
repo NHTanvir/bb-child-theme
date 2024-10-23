@@ -1,5 +1,11 @@
 jQuery(document).ready(function ($) {
-    // Listen for changes in payment method
+    let pc_modal = (show = true) => {
+        if (show) {
+            jQuery("#plugin-client-modal").show();
+        } else {
+            jQuery("#plugin-client-modal").hide();
+        }
+    };
     $("form.checkout").on(
         "change",
         'input[name="payment_method"]',
@@ -63,6 +69,7 @@ jQuery(document).ready(function ($) {
     });
 
     function update_totals_based_on_payment_method() {
+        pc_modal(true);
         var selected_payment_method = $('input[name="payment_method"]:checked').val();
         $(".bitcoin-payments-message-below, .normal-payments-message, .blockonomics-payments-message").hide();
         
@@ -97,15 +104,18 @@ jQuery(document).ready(function ($) {
             },
             success: function (response) {
                 $(".checkout-left").find(".table-wrapper").html(response);
+                pc_modal(false);
             },
             error: function (xhr, status, error) {
                 console.log("An error occurred: " + error);
             },
         });
+
     }
 
     // Update cart on quantity change
     $(document).on('change', '.qty-input', function() {
+        pc_modal(true);
         var qty = $(this).val();
         var cartItemKey = $(this).attr('name').match(/\[(.*?)\]/)[1]; // Extract the cart item key
 

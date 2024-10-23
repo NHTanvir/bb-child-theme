@@ -585,3 +585,11 @@ function woocommerce_update_cart_item_qty() {
 
     wp_die();
 }
+
+add_action( 'wp_footer', 'modal' );
+function modal() {
+    echo '
+    <div id="plugin-client-modal" style="display: none">
+        <img id="plugin-client-modal-loader" src="' . esc_attr( get_stylesheet_directory_uri() . '/images/loader.gif' ) . '" />
+    </div>';
+}
