@@ -452,7 +452,7 @@ function custom_woocommerce_order_button_text($button_text) {
 add_filter('woocommerce_get_settings_checkout', 'add_custom_field_to_gateway', 10, 2);
 
 function add_custom_field_to_gateway($settings, $current_section) {
-    if ($current_section == 'blockonomics') {
+
         $settings[] = array(
             'title'    => __('Icon URL', 'woocommerce'),
             'desc'     => __('This note will be shown on the checkout page for this payment method.'),
@@ -461,7 +461,6 @@ function add_custom_field_to_gateway($settings, $current_section) {
             'default'  => '',
             'desc_tip' => true,
         );
-    }
 
     return $settings;
 }
