@@ -119,88 +119,89 @@ function custom_checkout_columns_start() {
     echo '<div class="checkout-columns">';
     echo '<div class="checkout-left">';
     echo '<h3>Varukorg</h3>';
-
-    echo '<table class="product-table mobile-table">';
-        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-            $_product = $cart_item['data'];
-            $product = wc_get_product( $_product->get_parent_id() );
-            $product_name = $product->get_name();
-            if ($_product->is_type('variation')) {
-                $variation_data = $_product->get_variation_attributes();
-                $variation_name = reset($variation_data);
-                echo '<tr>';
-                    echo '<td>Produkt</td>';
-                    echo '<td>' . $product_name . '</td>';
-                echo '</tr>';
-                echo '<tr>';
-                    echo '<td>Quantity</td>';
-                    echo '<td>';
-                        echo '<div class="quantity">';
-                        echo '<button type="button" class="decrease-qty">-</button>';
-                        echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
-                        echo '<button type="button" class="increase-qty">+</button>';
-                        echo '</div>';
-                    echo '</td>';
-                echo '</tr>';
-                echo '<tr>';
-                    echo '<td>Duration</td>';
-                    echo '<td>' . $variation_name . '</td>';
-                echo '</tr>';
-                echo '<tr>';
-                echo '<td>Pris i SEK</td>';
-                echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
-                if ($selected_payment_method === 'blockonomics') {
+    echo "<div class='table-wrapper'>";
+        echo '<table class="product-table mobile-table">';
+            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                $_product = $cart_item['data'];
+                $product = wc_get_product( $_product->get_parent_id() );
+                $product_name = $product->get_name();
+                if ($_product->is_type('variation')) {
+                    $variation_data = $_product->get_variation_attributes();
+                    $variation_name = reset($variation_data);
                     echo '<tr>';
-                    echo '<td>Pris i BTC</td>';
-                    echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
+                        echo '<td>Produkt</td>';
+                        echo '<td>' . $product_name . '</td>';
                     echo '</tr>';
+                    echo '<tr>';
+                        echo '<td>Quantity</td>';
+                        echo '<td>';
+                            echo '<div class="quantity">';
+                            echo '<button type="button" class="decrease-qty">-</button>';
+                            echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                            echo '<button type="button" class="increase-qty">+</button>';
+                            echo '</div>';
+                        echo '</td>';
+                    echo '</tr>';
+                    echo '<tr>';
+                        echo '<td>Duration</td>';
+                        echo '<td>' . $variation_name . '</td>';
+                    echo '</tr>';
+                    echo '<tr>';
+                    echo '<td>Pris i SEK</td>';
+                    echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+                    if ($selected_payment_method === 'blockonomics') {
+                        echo '<tr>';
+                        echo '<td>Pris i BTC</td>';
+                        echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
+                        echo '</tr>';
+                    }
                 }
             }
-        }
-            
-    echo "</table>";
+                
+        echo "</table>";
 
-    echo '<table class="product-table desktop-table">';
-        echo '<thead>';
-        echo '<tr>';
-        echo '<th>Produkt</th>';
-        echo '<th>Quantity</th>';
-        echo '<th>Duration</th>';
-        echo '<th>Pris i SEK</th>';
-        if ($selected_payment_method === 'blockonomics') {
-            echo '<th>Pris i BTC</th>'; 
-        }
-        echo '</tr>';
-        echo '</thead>';
-        echo '<tbody>';
-        
-        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-            $_product = $cart_item['data'];
-            $product = wc_get_product( $_product->get_parent_id() );
-            $product_name = $product->get_name();
-            if ($_product->is_type('variation')) {
-                $variation_data = $_product->get_variation_attributes();
-                $variation_name = reset($variation_data);
-            }
+        echo '<table class="product-table desktop-table">';
+            echo '<thead>';
             echo '<tr>';
-            echo '<td>' . $product_name . '</td>';
-            echo '<td>';
-                echo '<div class="quantity">';
-                    echo '<button type="button" class="decrease-qty">-</button>';
-                        echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
-                    echo '<button type="button" class="increase-qty">+</button>';
-                echo '</div>';
-            echo '</td>';
-            echo '<td>' . $variation_name . '</td>';
-            echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+            echo '<th>Produkt</th>';
+            echo '<th>Quantity</th>';
+            echo '<th>Duration</th>';
+            echo '<th>Pris i SEK</th>';
             if ($selected_payment_method === 'blockonomics') {
-                echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
+                echo '<th>Pris i BTC</th>'; 
             }
             echo '</tr>';
-        }
+            echo '</thead>';
+            echo '<tbody>';
+            
+            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                $_product = $cart_item['data'];
+                $product = wc_get_product( $_product->get_parent_id() );
+                $product_name = $product->get_name();
+                if ($_product->is_type('variation')) {
+                    $variation_data = $_product->get_variation_attributes();
+                    $variation_name = reset($variation_data);
+                }
+                echo '<tr>';
+                echo '<td>' . $product_name . '</td>';
+                echo '<td>';
+                    echo '<div class="quantity">';
+                        echo '<button type="button" class="decrease-qty">-</button>';
+                            echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                        echo '<button type="button" class="increase-qty">+</button>';
+                    echo '</div>';
+                echo '</td>';
+                echo '<td>' . $variation_name . '</td>';
+                echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+                if ($selected_payment_method === 'blockonomics') {
+                    echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
+                }
+                echo '</tr>';
+            }
 
-        echo '</tbody>';
-    echo '</table>';
+            echo '</tbody>';
+        echo '</table>';
+    echo '</div>';
 
     echo '<br/><br/>';
     
@@ -445,11 +446,52 @@ add_action('wp_ajax_nopriv_update_table_on_payment_method_change', 'update_table
 function update_table_on_payment_method_change() {
     $selected_payment_method = sanitize_text_field($_POST['payment_method']);
 
+    echo '<table class="product-table mobile-table">';
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        $_product = $cart_item['data'];
+        $product = wc_get_product( $_product->get_parent_id() );
+        $product_name = $product->get_name();
+        if ($_product->is_type('variation')) {
+            $variation_data = $_product->get_variation_attributes();
+            $variation_name = reset($variation_data);
+            echo '<tr>';
+                echo '<td>Produkt</td>';
+                echo '<td>' . $product_name . '</td>';
+            echo '</tr>';
+            echo '<tr>';
+                echo '<td>Quantity</td>';
+                echo '<td>';
+                    echo '<div class="quantity">';
+                    echo '<button type="button" class="decrease-qty">-</button>';
+                    echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                    echo '<button type="button" class="increase-qty">+</button>';
+                    echo '</div>';
+                echo '</td>';
+            echo '</tr>';
+            echo '<tr>';
+                echo '<td>Duration</td>';
+                echo '<td>' . $variation_name . '</td>';
+            echo '</tr>';
+            echo '<tr>';
+            echo '<td>Pris i SEK</td>';
+            echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+            if ($selected_payment_method === 'blockonomics') {
+                echo '<tr>';
+                echo '<td>Pris i BTC</td>';
+                echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
+                echo '</tr>';
+            }
+        }
+    }
+        
+echo "</table>";
+
+echo '<table class="product-table desktop-table">';
     echo '<thead>';
     echo '<tr>';
     echo '<th>Produkt</th>';
     echo '<th>Quantity</th>';
-    echo '<th>Duartion</th>';
+    echo '<th>Duration</th>';
     echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
         echo '<th>Pris i BTC</th>'; 
@@ -460,10 +502,11 @@ function update_table_on_payment_method_change() {
     
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
-        $product_name = $_product->get_name();
+        $product = wc_get_product( $_product->get_parent_id() );
+        $product_name = $product->get_name();
         if ($_product->is_type('variation')) {
             $variation_data = $_product->get_variation_attributes();
-            $product_name = reset($variation_data);
+            $variation_name = reset($variation_data);
         }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
@@ -474,7 +517,7 @@ function update_table_on_payment_method_change() {
                 echo '<button type="button" class="increase-qty">+</button>';
             echo '</div>';
         echo '</td>';
-        echo '<td>' . do_shortcode('[product-duration]') . '</td>';
+        echo '<td>' . $variation_name . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
             echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
@@ -483,6 +526,7 @@ function update_table_on_payment_method_change() {
     }
 
     echo '</tbody>';
+    echo '</table>';
     wp_die(); // Terminate the request
 
 }

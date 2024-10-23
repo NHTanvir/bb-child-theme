@@ -96,7 +96,7 @@ jQuery(document).ready(function ($) {
                 payment_method: selected_payment_method,
             },
             success: function (response) {
-                $(".checkout-left").find(".product-table").html(response);
+                $(".checkout-left").find(".table-wrapper").html(response);
             },
             error: function (xhr, status, error) {
                 console.log("An error occurred: " + error);
