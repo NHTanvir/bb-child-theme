@@ -332,10 +332,22 @@ add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
 function custom_payment_gateway_icon($icon, $gateway_id) {
 	$setting 	= get_option( "woocommerce_{$gateway_id}_settings" );
 	$title 		= $setting['title']; 
+    $description =  $setting['description']; 
+    $description =  $setting['description']; 
+    $icon_link      = get_option("{$gateway_id}_icon_link" );
     if ($gateway_id === 'blockonomics') {
-        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">'. $title .'</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>';
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">'. $title .'</span><p class="payment-discription">
+        <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>
+        <p>'. $description .'</p>
+        <img src="' . $icon_link . '">
+        ';
     } else {
-        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo"><span class="payment-text">'. $title .'</span><p class="payment-discription"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-14.png">Direkt</p>';
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo">
+        <span class="payment-text">'. $title .'</span><p class="payment-discription">
+        <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-14.png">Direkt</p>
+                <p>'. $description .'</p>
+        <img src="' . $icon_link . '">
+        ';
     }
 
     return $icon;
@@ -452,11 +464,10 @@ function custom_woocommerce_order_button_text($button_text) {
 add_filter('woocommerce_get_settings_checkout', 'add_custom_field_to_gateway', 10, 2);
 
 function add_custom_field_to_gateway($settings, $current_section) {
-
         $settings[] = array(
             'title'    => __('Icon URL', 'woocommerce'),
             'desc'     => __('This note will be shown on the checkout page for this payment method.'),
-            'id'       => 'woocommerce_custom_payment_note',
+            'id'       => "{$current_section}_icon_link",
             'type'     => 'text',
             'default'  => '',
             'desc_tip' => true,
