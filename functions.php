@@ -360,8 +360,6 @@ function add_custom_payment_message() {
     echo '</div>';
 }
 add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
-
-// Function to display the custom coupon form
 function custom_coupon_form() {
     ?>
     <div class="coupon" id="coupon-section"> <!-- Initially hidden -->
@@ -519,7 +517,7 @@ echo '<table class="product-table desktop-table">';
 
     echo '</tbody>';
     echo '</table>';
-    wp_die(); // Terminate the request
+    wp_die();
 
 }
 
@@ -539,10 +537,9 @@ function add_payment_method_class($classes) {
 add_filter('woocommerce_order_button_text', 'custom_woocommerce_order_button_text', 9999999999);
 
 function custom_woocommerce_order_button_text($button_text) {
-    // Get the chosen payment method from WooCommerce session
+
     $chosen_payment_method = WC()->session->get('chosen_payment_method'); 
 
-    // Change the button text based on the selected payment method
     if ($chosen_payment_method === 'blockonomics') {
         $button_text = 'Pay with Bitcoin';
     } elseif ($chosen_payment_method === 'highriskshop-instant-payment-gateway-wert') {
@@ -554,7 +551,6 @@ function custom_woocommerce_order_button_text($button_text) {
     return $button_text;
 }
 
-// Add custom admin setting field for the payment gateway
 add_filter('woocommerce_get_settings_checkout', 'add_custom_field_to_gateway', 10, 2);
 
 function add_custom_field_to_gateway($settings, $current_section) {
@@ -577,10 +573,9 @@ function woocommerce_update_cart_item_qty() {
     $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
     $quantity = intval($_POST['quantity']);
 
-    // Update the cart item quantity
     if ($cart_item_key && $quantity) {
         WC()->cart->set_quantity($cart_item_key, $quantity);
-        WC()->cart->calculate_totals(); // Recalculate totals after quantity update
+        WC()->cart->calculate_totals(); 
     }
 
     wp_die();
