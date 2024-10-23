@@ -7,45 +7,65 @@ jQuery(document).ready(function ($) {
             update_totals_based_on_payment_method();
         }
     );
-        function updatePaymentMethodClass() {
+
+    function updatePaymentMethodClass() {
         $('input[name="payment_method"]:checked').closest('li').addClass('payment-active');
     }
-function updateBodyClass() {
-    var selectedMethod = $('input[name="payment_method"]:checked').val();
 
-    $('body').removeClass(function(index, className) {
-        return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
-    });
+    function updateBodyClass() {
+        var selectedMethod = $('input[name="payment_method"]:checked').val();
 
-    if (selectedMethod === 'blockonomics') {
-        $('body').addClass('payment-method-blockonomics');
-    } else {
-        $('body').addClass('payment-method-card');
+        // Remove previous payment method body classes
+        $('body').removeClass(function (index, className) {
+            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
+        });
+
+        if (selectedMethod === 'blockonomics') {
+            $('body').addClass('payment-method-blockonomics');
+        } else {
+            $('body').addClass('payment-method-card');
+        }
     }
-}
 
+    // Add class based on selected payment type
+    function updatePaymentTypeClass() {
+        var selectedPaymentType = $('input[name="payment_type"]:checked').val();
 
-    // Initial call to set the class on page load
+        // Remove previous payment type body classes
+        $('body').removeClass(function (index, className) {
+            return (className.match(/(^|\s)payment-type-\S+/g) || []).join(' ');
+        });
+
+        // Add new class based on selected payment type
+        if (selectedPaymentType) {
+            $('body').addClass('payment-type-' + selectedPaymentType);
+        }
+    }
+
+    // Initial call to set the classes on page load
     updateBodyClass();
+    updatePaymentTypeClass();
 
     // Change event to update class when payment method is changed
-    $('form.woocommerce-checkout').on('change', 'input[name="payment_method"]', function() {
-         updatePaymentMethodClass();
+    $('form.woocommerce-checkout').on('change', 'input[name="payment_method"]', function () {
+        updatePaymentMethodClass();
         updateBodyClass();
     });
-    
-        $(document.body).on('updated_checkout', function() {
+
+    // Listen for changes in payment type
+    $('.payment-box-wrapper').on('change', 'input[name="payment_type"]', function () {
+        updatePaymentTypeClass();
+    });
+
+    $(document.body).on('updated_checkout', function () {
         // Reapply the class to the selected payment method
         updatePaymentMethodClass();
     });
 
     function update_totals_based_on_payment_method() {
-        var selected_payment_method = $(
-            'input[name="payment_method"]:checked'
-        ).val();
-        $(
-            ".bitcoin-payments-message-below, .normal-payments-message, .blockonomics-payments-message"
-        ).hide();
+        var selected_payment_method = $('input[name="payment_method"]:checked').val();
+        $(".bitcoin-payments-message-below, .normal-payments-message, .blockonomics-payments-message").hide();
+        
         if (selected_payment_method === "blockonomics") {
             $(".bitcoin-payments-message-below").show();
             $(".blockonomics-payments-message").show();
@@ -54,11 +74,11 @@ function updateBodyClass() {
         }
 
         $.ajax({
-            url: wc_checkout_params.ajax_url, // WooCommerce AJAX URL
+            url: wc_checkout_params.ajax_url,
             type: "POST",
             data: {
                 action: "update_cart_totals_on_payment_method_change",
-                payment_method: selected_payment_method, // Pass the selected payment method
+                payment_method: selected_payment_method,
             },
             success: function (response) {
                 $(".checkout-left").find(".total-section").html(response);
