@@ -103,4 +103,43 @@ jQuery(document).ready(function ($) {
             },
         });
     }
+    
+    $(document).on('click', '.increase-qty', function() {
+        var qtyInput = $(this).siblings('.qty-input');
+        var currentVal = parseInt(qtyInput.val());
+        if (!isNaN(currentVal)) {
+            qtyInput.val(currentVal + 1).trigger('change');
+        }
+    });
+
+    // Decrease Quantity
+    $(document).on('click', '.decrease-qty', function() {
+        var qtyInput = $(this).siblings('.qty-input');
+        var currentVal = parseInt(qtyInput.val());
+        if (!isNaN(currentVal) && currentVal > 1) {
+            qtyInput.val(currentVal - 1).trigger('change');
+        }
+    });
+
+    // Update cart on quantity change
+    $(document).on('change', '.qty-input', function() {
+        var qty = $(this).val();
+        var cartItemKey = $(this).attr('name').match(/\[(.*?)\]/)[1]; // Extract the cart item key
+
+        var data = {
+            action: 'woocommerce_update_cart_item_qty',
+            cart_item_key: cartItemKey,
+            quantity: qty
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: wc_checkout_params.ajax_url,
+            data: data,
+            success: function(response) {
+                // Optionally, you can refresh the table or cart totals here
+                location.reload(); // Refresh page to reflect new totals
+            }
+        });
+    });
 });

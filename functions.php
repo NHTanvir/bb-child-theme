@@ -124,6 +124,7 @@ function custom_checkout_columns_start() {
     echo '<thead>';
     echo '<tr>';
     echo '<th>Produkt</th>';
+    echo '<th>Quantity</th>';
     echo '<th>Duration</th>';
     echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
@@ -142,6 +143,13 @@ function custom_checkout_columns_start() {
         }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
+        echo '<td>';
+            echo '<div class="quantity">';
+                echo '<button type="button" class="decrease-qty">-</button>';
+                    echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                echo '<button type="button" class="increase-qty">+</button>';
+            echo '</div>';
+        echo '</td>';
         echo '<td>' . do_shortcode('[product-duration]') . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
@@ -398,6 +406,7 @@ function update_table_on_payment_method_change() {
     echo '<thead>';
     echo '<tr>';
     echo '<th>Produkt</th>';
+    echo '<th>Quantity</th>';
     echo '<th>Duartion</th>';
     echo '<th>Pris i SEK</th>';
     if ($selected_payment_method === 'blockonomics') {
@@ -416,6 +425,13 @@ function update_table_on_payment_method_change() {
         }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
+        echo '<td>';
+            echo '<div class="quantity">';
+                echo '<button type="button" class="decrease-qty">-</button>';
+                    echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                echo '<button type="button" class="increase-qty">+</button>';
+            echo '</div>';
+        echo '</td>';
         echo '<td>' . do_shortcode('[product-duration]') . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
