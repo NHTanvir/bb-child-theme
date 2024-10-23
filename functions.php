@@ -112,78 +112,108 @@ remove_action('woocommerce_checkout_order_review', 'woocommerce_order_review', 1
 remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10); 
 
 function custom_checkout_columns_start() {
-    // Get the selected payment method from WooCommerce session
+
     $selected_payment_method = WC()->session->get('chosen_payment_method');
+    $is_mobile = wp_is_mobile();
 
     echo '<div class="checkout-columns">';
     echo '<div class="checkout-left">';
-
-    // Display the product table
     echo '<h3>Varukorg</h3>';
-    echo '<table class="product-table">';
-    echo '<thead>';
-    echo '<tr>';
-    echo '<th>Produkt</th>';
-    echo '<th>Quantity</th>';
-    echo '<th>Duration</th>';
-    echo '<th>Pris i SEK</th>';
-    if ($selected_payment_method === 'blockonomics') {
-        echo '<th>Pris i BTC</th>'; 
-    }
-    echo '</tr>';
-    echo '</thead>';
-    echo '<tbody>';
-    
-    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-        $_product = $cart_item['data'];
-        $product_name = $_product->get_name();
-        if ($_product->is_type('variation')) {
-            $variation_data = $_product->get_variation_attributes();
-            $product_name = reset($variation_data);
-        }
+
+    echo '<table class="product-table mobile-table">';
         echo '<tr>';
+        echo '<td>Produkt</td>';
         echo '<td>' . $product_name . '</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>Quantity</td>';
         echo '<td>';
-            echo '<div class="quantity">';
-                echo '<button type="button" class="decrease-qty">-</button>';
-                    echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
-                echo '<button type="button" class="increase-qty">+</button>';
-            echo '</div>';
+        echo '<div class="quantity">';
+        echo '<button type="button" class="decrease-qty">-</button>';
+        echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+        echo '<button type="button" class="increase-qty">+</button>';
+        echo '</div>';
         echo '</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>Duration</td>';
         echo '<td>' . do_shortcode('[product-duration]') . '</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>Pris i SEK</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
         if ($selected_payment_method === 'blockonomics') {
+            echo '<td>Pris i BTC</td>';
             echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
         }
         echo '</tr>';
-    }
+    echo "</table>";
 
-    echo '</tbody>';
+    echo '<table class="product-table desktop-table">';
+        echo '<thead>';
+        echo '<tr>';
+        echo '<th>Produkt</th>';
+        echo '<th>Quantity</th>';
+        echo '<th>Duration</th>';
+        echo '<th>Pris i SEK</th>';
+        if ($selected_payment_method === 'blockonomics') {
+            echo '<th>Pris i BTC</th>'; 
+        }
+        echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            $_product = $cart_item['data'];
+            $product_name = $_product->get_name();
+            if ($_product->is_type('variation')) {
+                $variation_data = $_product->get_variation_attributes();
+                $product_name = reset($variation_data);
+            }
+            echo '<tr>';
+            echo '<td>' . $product_name . '</td>';
+            echo '<td>';
+                echo '<div class="quantity">';
+                    echo '<button type="button" class="decrease-qty">-</button>';
+                        echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                    echo '<button type="button" class="increase-qty">+</button>';
+                echo '</div>';
+            echo '</td>';
+            echo '<td>' . do_shortcode('[product-duration]') . '</td>';
+            echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+            if ($selected_payment_method === 'blockonomics') {
+                echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
+            }
+            echo '</tr>';
+        }
+
+        echo '</tbody>';
     echo '</table>';
 
     echo '<br/><br/>';
     
     if ($selected_payment_method === 'blockonomics') {
         echo '<div class="total-section">';
-        echo '<table class="totals-table">';
-        echo '<tbody>';
-        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-        echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
-        echo '</tbody>';
-        echo '</table>';
+            echo '<table class="totals-table">';
+            echo '<tbody>';
+            echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+            echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
+            echo '</tbody>';
+            echo '</table>';
         echo '</div>';
     } else {
         echo '<div class="total-section">';
-        echo '<table class="totals-table">';
-        echo '<tbody>';
-        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-        echo '<tr><td>Kortavgift - 10%</td><td>' . do_shortcode('[total-fee-sek]') . '</td></tr>'; 
-        echo '<tr><td>Totalt</td><td>' . do_shortcode('[total-price-eur]') . '</td></tr>';
-        echo '</tbody>';
-        echo '</table>';
+            echo '<table class="totals-table">';
+            echo '<tbody>';
+            echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+            echo '<tr><td>Kortavgift - 10%</td><td>' . do_shortcode('[total-fee-sek]') . '</td></tr>'; 
+            echo '<tr><td>Totalt</td><td>' . do_shortcode('[total-price-eur]') . '</td></tr>';
+            echo '</tbody>';
+            echo '</table>';
         echo '</div>';
     }
-    custom_coupon_form();
+    custom_coupon_form();   
+
     echo '</div>'; 
 }
 
@@ -492,18 +522,3 @@ function add_custom_field_to_gateway($settings, $current_section) {
     return $settings;
 }
 
-add_action('wp_ajax_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
-add_action('wp_ajax_nopriv_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
-
-function woocommerce_update_cart_item_qty() {
-    $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
-    $quantity = intval($_POST['quantity']);
-
-    // Update the cart item quantity
-    if ($cart_item_key && $quantity) {
-        WC()->cart->set_quantity($cart_item_key, $quantity);
-        WC()->cart->calculate_totals(); // Recalculate totals after quantity update
-    }
-
-    wp_die();
-}

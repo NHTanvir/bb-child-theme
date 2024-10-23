@@ -82,3 +82,17 @@ template: bb-theme
 .payment_method_blockonomics{
     display: block;
 }
+.desktop-table {
+    display: table; 
+}
+.mobile-table {
+    display: none; 
+}
+@media (max-width: 768px) {
+    .desktop-table {
+        display: none; /* Hide for mobile */
+    }
+    .mobile-table {
+        display: table; /* Show for mobile */
+    }
+}
