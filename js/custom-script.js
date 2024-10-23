@@ -137,8 +137,7 @@ jQuery(document).ready(function ($) {
             url: wc_checkout_params.ajax_url,
             data: data,
             success: function(response) {
-                // Optionally, you can refresh the table or cart totals here
-                location.reload(); // Refresh page to reflect new totals
+                location.reload();
             }
         });
     });

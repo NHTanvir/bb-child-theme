@@ -491,3 +491,19 @@ function add_custom_field_to_gateway($settings, $current_section) {
 
     return $settings;
 }
+
+add_action('wp_ajax_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
+add_action('wp_ajax_nopriv_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
+
+function woocommerce_update_cart_item_qty() {
+    $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
+    $quantity = intval($_POST['quantity']);
+
+    // Update the cart item quantity
+    if ($cart_item_key && $quantity) {
+        WC()->cart->set_quantity($cart_item_key, $quantity);
+        WC()->cart->calculate_totals(); // Recalculate totals after quantity update
+    }
+
+    wp_die();
+}
