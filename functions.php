@@ -1,5 +1,4 @@
 <?php
-// die('testing functions.php');
 function my_custom_scripts() {
     wp_enqueue_script(
         'custom-script', 
