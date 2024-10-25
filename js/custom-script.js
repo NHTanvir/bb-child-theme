@@ -21,6 +21,7 @@ jQuery(document).ready(function ($) {
     function updateBodyClass() {
         var selectedMethod = $('input[name="payment_method"]:checked').val();
 
+        // Remove previous payment method body classes
         $('body').removeClass(function (index, className) {
             return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
         });
@@ -32,31 +33,38 @@ jQuery(document).ready(function ($) {
         }
     }
 
+    // Add class based on selected payment type
     function updatePaymentTypeClass() {
         var selectedPaymentType = $('input[name="payment_type"]:checked').val();
 
+        // Remove previous payment type body classes
         $('body').removeClass(function (index, className) {
             return (className.match(/(^|\s)payment-type-\S+/g) || []).join(' ');
         });
 
+        // Add new class based on selected payment type
         if (selectedPaymentType) {
             $('body').addClass('payment-type-' + selectedPaymentType);
         }
     }
 
+    // Initial call to set the classes on page load
     updateBodyClass();
     updatePaymentTypeClass();
 
+    // Change event to update class when payment method is changed
     $('form.woocommerce-checkout').on('change', 'input[name="payment_method"]', function () {
         updatePaymentMethodClass();
         updateBodyClass();
     });
 
+    // Listen for changes in payment type
     $('.payment-box-wrapper').on('change', 'input[name="payment_type"]', function () {
         updatePaymentTypeClass();
     });
 
     $(document.body).on('updated_checkout', function () {
+        // Reapply the class to the selected payment method
         updatePaymentMethodClass();
     });
 
@@ -105,10 +113,11 @@ jQuery(document).ready(function ($) {
 
     }
 
+    // Update cart on quantity change
     $(document).on('change', '.qty-input', function() {
         pc_modal(true);
         var qty = $(this).val();
-        var cartItemKey = $(this).attr('name').match(/\[(.*?)\]/)[1]; 
+        var cartItemKey = $(this).attr('name').match(/\[(.*?)\]/)[1]; // Extract the cart item key
 
         var data = {
             action: 'woocommerce_update_cart_item_qty',
