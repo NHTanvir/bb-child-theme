@@ -1,4 +1,5 @@
 <?php
+// die('testing functions.php');
 function my_custom_scripts() {
     wp_enqueue_script(
         'custom-script', 
@@ -230,6 +231,7 @@ function custom_checkout_columns_end() {
     ?>
     <div class="checkout-right">
 
+        <!-- Heading for the payment section -->
         <h3>Betalning</h3>
 
        <div class="payment-type-wrapper">
@@ -258,6 +260,7 @@ function custom_checkout_columns_end() {
             </div>
         </div>
 
+        <!-- Payment method section -->
         <div class="payment-methods-section">
             <h6 class="method">Payment Method</h6>
     <?php
@@ -266,13 +269,14 @@ function custom_checkout_columns_end() {
         woocommerce_checkout_payment();
     }
 
+    // Message for Bitcoin payments (only visible when "blockonomics" is selected)
     echo '<div class="bitcoin-payments-message-below" style="display:none">';
     echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
     echo 'Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.';
     echo '</p>';
     echo '</div>';
 
-    echo '</div>';
+    echo '</div>'; // Close the checkout right div
 
     ?>
     <script type="text/javascript">
@@ -281,24 +285,25 @@ function custom_checkout_columns_end() {
                 var paymentType = $('input[name="payment_type"]:checked').val();
     
                 if (paymentType === 'direct') {
+                    // Show all payment methods except Blockonomics
                     $('.wc_payment_method').show();
                     $('.payment_method_blockonomics').hide();
-                    $('input[name="payment_method"]:first').prop('checked', true); 
                 } else {
                     // Hide all payment methods except Blockonomics
                     $('.wc_payment_method').hide();
                     $('.payment_method_blockonomics').show();
-                    $('input.payment_method_blockonomics').prop('checked', true);
                 }
             }
     
-
+            // Trigger the function on page load
             togglePaymentMethods();
-
+    
+            // Re-trigger the function when the radio button selection changes
             $('input[name="payment_type"]').change(function() {
                 togglePaymentMethods();
             });
     
+            // Hook into WooCommerce's update_checkout event and payment_method_updated event
             $(document.body).on('updated_checkout payment_method_selected', function() {
                 togglePaymentMethods();
             });
@@ -353,9 +358,11 @@ function add_custom_payment_message() {
     echo '</div>';
 }
 add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
+
+// Function to display the custom coupon form
 function custom_coupon_form() {
     ?>
-    <div class="coupon" id="coupon-section">
+    <div class="coupon" id="coupon-section"> <!-- Initially hidden -->
         <p class="form-row">
             <input type="text" name="coupon_code" class="input-text" placeholder="Rabattkod" id="coupon_code" value="">
             <button type="submit" class="button" name="apply_coupon" value="Apply coupon">Använd</button>
@@ -510,7 +517,7 @@ echo '<table class="product-table desktop-table">';
 
     echo '</tbody>';
     echo '</table>';
-    wp_die();
+    wp_die(); // Terminate the request
 
 }
 
@@ -530,9 +537,10 @@ function add_payment_method_class($classes) {
 add_filter('woocommerce_order_button_text', 'custom_woocommerce_order_button_text', 9999999999);
 
 function custom_woocommerce_order_button_text($button_text) {
-
+    // Get the chosen payment method from WooCommerce session
     $chosen_payment_method = WC()->session->get('chosen_payment_method'); 
 
+    // Change the button text based on the selected payment method
     if ($chosen_payment_method === 'blockonomics') {
         $button_text = 'Pay with Bitcoin';
     } elseif ($chosen_payment_method === 'highriskshop-instant-payment-gateway-wert') {
@@ -544,6 +552,7 @@ function custom_woocommerce_order_button_text($button_text) {
     return $button_text;
 }
 
+// Add custom admin setting field for the payment gateway
 add_filter('woocommerce_get_settings_checkout', 'add_custom_field_to_gateway', 10, 2);
 
 function add_custom_field_to_gateway($settings, $current_section) {
@@ -566,9 +575,10 @@ function woocommerce_update_cart_item_qty() {
     $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
     $quantity = intval($_POST['quantity']);
 
+    // Update the cart item quantity
     if ($cart_item_key && $quantity) {
         WC()->cart->set_quantity($cart_item_key, $quantity);
-        WC()->cart->calculate_totals(); 
+        WC()->cart->calculate_totals(); // Recalculate totals after quantity update
     }
 
     wp_die();
