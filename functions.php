@@ -284,12 +284,10 @@ function custom_checkout_columns_end() {
                 if (paymentType === 'direct') {
                     $('.wc_payment_method').show();
                     $('.payment_method_blockonomics').hide();
-                    $('input[name="payment_method"]:first').prop('checked', true); 
                 } else {
                     // Hide all payment methods except Blockonomics
                     $('.wc_payment_method').hide();
                     $('.payment_method_blockonomics').show();
-                    $('input.payment_method_blockonomics').prop('checked', true);
                 }
             }
     

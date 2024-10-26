@@ -145,6 +145,9 @@ width: 50%;
 .woocommerce-checkout #payment ul.payment_methods li label>img:last-child {
     display: none;
 }
+.bitcoin-payments-message-below{
+    display:none !important;
+}
 @media (max-width: 768px) {
     .desktop-table {
         display: none; /* Hide for mobile */
