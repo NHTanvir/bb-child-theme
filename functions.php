@@ -269,7 +269,7 @@ function custom_checkout_columns_end() {
     echo '</div>';
     echo '</div>';
 
-    echo '<div class="bitcoin-payments-message-below" style="display:none">';
+    echo '<div class="bitcoin-payments-message-below">';
         echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
         echo 'Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.';
         echo '</p>';
