@@ -231,33 +231,6 @@ function custom_checkout_columns_end() {
     <div class="checkout-right">
 
         <h3>Betalning</h3>
-
-       <div class="payment-type-wrapper">
-            <h6 class="method">Payment Type</h6>
-       </div>
-
-
-        <div class="payment-box-wrapper">
-            <div class="payment-type-box">
-                <label>
-                    <input type="radio" name="payment_type" value="delayed" checked>
-                    <div class="payment-type-content">
-                        <h4>Delayed Payment</h4>
-                        <p>Betala senare via Blockonomics med kryptovaluta.</p>
-                    </div>
-                </label>
-            </div>
-            <div class="payment-type-box">
-                <label>
-                    <input type="radio" name="payment_type" value="direct">
-                    <div class="payment-type-content">
-                        <h4>Direct Payment</h4>
-                        <p>Betala direkt med någon av våra andra betalningsmetoder.</p>
-                    </div>
-                </label>
-            </div>
-        </div>
-
         <div class="payment-methods-section">
             <h6 class="method">Payment Method</h6>
     <?php
@@ -274,41 +247,7 @@ function custom_checkout_columns_end() {
         echo 'Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.';
         echo '</p>';
     echo '</div>';
-
-    ?>
-    <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            function togglePaymentMethods() {
-                var paymentType = $('input[name="payment_type"]:checked').val();
-    
-                if (paymentType === 'direct') {
-                    $('.wc_payment_method').show();
-                    $('.payment_method_blockonomics').hide();
-                } else {
-                    // Hide all payment methods except Blockonomics
-                    $('.wc_payment_method').hide();
-                    $('.payment_method_blockonomics').show();
-                }
-            }
-    
-
-            togglePaymentMethods();
-
-            $('input[name="payment_type"]').change(function() {
-                togglePaymentMethods();
-            });
-    
-            $(document.body).on('updated_checkout payment_method_selected', function() {
-                togglePaymentMethods();
-            });
-        });
-    </script>
-    <?php
-
 }
-
-
-
 
 function add_custom_payment_message() {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
