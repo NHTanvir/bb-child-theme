@@ -168,6 +168,7 @@ function custom_checkout_columns_start() {
             if ($selected_payment_method === 'blockonomics') {
                 echo '<th>Pris i BTC</th>'; 
             }
+            echo "<th></th>";
             echo '</tr>';
             echo '</thead>';
             echo '<tbody>';
@@ -192,6 +193,11 @@ function custom_checkout_columns_start() {
                 if ($selected_payment_method === 'blockonomics') {
                     echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
                 }
+                echo '<td>';
+                    echo "<button type='button' class='remove-cart'>";
+                        echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
+                    echo '</button>';
+                echo '</td>';
                 echo '</tr>';
             }
 
@@ -447,6 +453,7 @@ echo '<table class="product-table desktop-table">';
     if ($selected_payment_method === 'blockonomics') {
         echo '<th>Pris i BTC</th>'; 
     }
+    echo "<th></th>";
     echo '</tr>';
     echo '</thead>';
     echo '<tbody>';
@@ -471,6 +478,11 @@ echo '<table class="product-table desktop-table">';
         if ($selected_payment_method === 'blockonomics') {
             echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
         }
+        echo '<td>';
+            echo "<button type='button' class='remove-cart'>";
+                echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
+            echo '</button>';
+        echo '</td>';
         echo '</tr>';
     }
 
