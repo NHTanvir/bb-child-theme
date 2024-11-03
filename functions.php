@@ -203,11 +203,15 @@ function custom_checkout_columns_start() {
             echo '<h6 class="method">'. $addon_product->get_title() .'</h6>';
             echo "<img src='https://iptvutanbox.com/wp-content/uploads/2024/08/info-1.svg'>";
             echo '<p>Du kan lägga till hur många extra konton du vill.</p>';
-        echo "<div>";
+        echo "</div>";
 
         echo "<div class='addons-body'>";
             $available_variations = $addon_product->get_available_variations();
             if (!empty($available_variations)) {
+                echo '<select name="addon_option" class="addon-option-select">';
+                    echo '<option value="nytt-konto" selected>Nytt konto </option>';
+                    echo '<option value="Förnyelse">Förnyelse</option>';
+                echo '</select>';
                 echo '<select name="addon_variation" class="addon-variation-select">';
                 foreach ($available_variations as $variation) {
                     $variation_obj = wc_get_product($variation['variation_id']);
@@ -217,8 +221,10 @@ function custom_checkout_columns_start() {
                     echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
                 }
                 echo '</select>';
+                echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress'>";
+
             } 
-            echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till i Varukorg</button>';
+            echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
         echo "</div>";
     echo '</div>';
     echo '<br/><br/>';
