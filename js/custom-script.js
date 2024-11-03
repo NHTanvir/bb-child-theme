@@ -15,43 +15,54 @@ jQuery(document).ready(function ($) {
     );
 
     function updatePaymentMethodClass() {
-        $('input[name="payment_method"]:checked').closest('li').addClass('payment-active');
+        $('input[name="payment_method"]:checked')
+            .closest("li")
+            .addClass("payment-active");
     }
 
     function updateBodyClass() {
         var selectedMethod = $('input[name="payment_method"]:checked').val();
 
         // Remove previous payment method body classes
-        $('body').removeClass(function (index, className) {
-            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(' ');
+        $("body").removeClass(function (index, className) {
+            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(
+                " "
+            );
         });
 
-        if (selectedMethod === 'blockonomics') {
-            $('body').addClass('payment-method-blockonomics');
+        if (selectedMethod === "blockonomics") {
+            $("body").addClass("payment-method-blockonomics");
         } else {
-            $('body').addClass('payment-method-card');
+            $("body").addClass("payment-method-card");
         }
     }
 
     updateBodyClass();
 
-
     // Change event to update class when payment method is changed
-    $('form.woocommerce-checkout').on('change', 'input[name="payment_method"]', function () {
-        updatePaymentMethodClass();
-        updateBodyClass();
-    });
+    $("form.woocommerce-checkout").on(
+        "change",
+        'input[name="payment_method"]',
+        function () {
+            updatePaymentMethodClass();
+            updateBodyClass();
+        }
+    );
 
-    $(document.body).on('updated_checkout', function () {
+    $(document.body).on("updated_checkout", function () {
         // Reapply the class to the selected payment method
         updatePaymentMethodClass();
     });
 
     function update_totals_based_on_payment_method() {
         pc_modal(true);
-        var selected_payment_method = $('input[name="payment_method"]:checked').val();
-        $(".bitcoin-payments-message-below, .normal-payments-message, .blockonomics-payments-message").hide();
-        
+        var selected_payment_method = $(
+            'input[name="payment_method"]:checked'
+        ).val();
+        $(
+            ".bitcoin-payments-message-below, .normal-payments-message, .blockonomics-payments-message"
+        ).hide();
+
         if (selected_payment_method === "blockonomics") {
             $(".bitcoin-payments-message-below").show();
             $(".blockonomics-payments-message").show();
@@ -89,28 +100,50 @@ jQuery(document).ready(function ($) {
                 console.log("An error occurred: " + error);
             },
         });
-
     }
 
     // Update cart on quantity change
-    $(document).on('change', '.qty-input', function() {
+    $(document).on("change", ".qty-input", function () {
         pc_modal(true);
         var qty = $(this).val();
-        var cartItemKey = $(this).attr('name').match(/\[(.*?)\]/)[1]; // Extract the cart item key
+        var cartItemKey = $(this)
+            .attr("name")
+            .match(/\[(.*?)\]/)[1]; // Extract the cart item key
 
         var data = {
-            action: 'woocommerce_update_cart_item_qty',
+            action: "woocommerce_update_cart_item_qty",
             cart_item_key: cartItemKey,
-            quantity: qty
+            quantity: qty,
         };
 
         $.ajax({
-            type: 'POST',
+            type: "POST",
             url: wc_checkout_params.ajax_url,
             data: data,
-            success: function(response) {
+            success: function (response) {
                 update_totals_based_on_payment_method();
-            }
+            },
+        });
+    });
+    $(".add-addon-to-cart").on("click", function (e) {
+        e.preventDefault();
+
+        var product_id = $(this).data("product_id");
+        var variation_id = $(".addon-variation-select").val();
+
+        $.ajax({
+            url: wc_add_to_cart_params.ajax_url,
+            type: "POST",
+            data: {
+                action: "add_addon_to_cart",
+                product_id: product_id,
+                variation_id: variation_id,
+            },
+            success: function (response) {
+                if (response.success) {
+                    update_totals_based_on_payment_method();
+                }
+            },
         });
     });
 });
