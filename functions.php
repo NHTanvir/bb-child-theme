@@ -204,6 +204,22 @@ function custom_checkout_columns_start() {
             echo "<img src='https://iptvutanbox.com/wp-content/uploads/2024/08/info-1.svg'>";
             echo '<p>Du kan lägga till hur många extra konton du vill.</p>';
         echo "<div>";
+
+        echo "<div class='addons-body'>";
+            $available_variations = $addon_product->get_available_variations();
+            if (!empty($available_variations)) {
+                echo '<select name="addon_variation" class="addon-variation-select">';
+                foreach ($available_variations as $variation) {
+                    $variation_obj = wc_get_product($variation['variation_id']);
+                    $attributes = $variation_obj->get_attributes();
+                    $variation_name = implode(', ', array_values($attributes)); 
+        
+                    echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
+                }
+                echo '</select>';
+            } 
+            echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till i Varukorg</button>';
+        echo "</div>";
     echo '</div>';
     echo '<br/><br/>';
     
