@@ -114,7 +114,7 @@ remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_f
 function custom_checkout_columns_start() {
 
     $selected_payment_method = WC()->session->get('chosen_payment_method');
-    $is_mobile = wp_is_mobile();
+    $addon_product = wc_get_product( 17936 );
 
     echo '<div class="checkout-columns">';
     echo '<div class="checkout-left">';
@@ -198,7 +198,13 @@ function custom_checkout_columns_start() {
             echo '</tbody>';
         echo '</table>';
     echo '</div>';
-
+    echo '<div class="addons-section">';
+        echo "<div class='addons-head'>";
+            echo '<h6 class="method">'. $addon_product->get_title() .'</h6>';
+            echo "<img src='https://iptvutanbox.com/wp-content/uploads/2024/08/info-1.svg'>";
+            echo '<p>Du kan lägga till hur många extra konton du vill.</p>';
+        echo "<div>";
+    echo '</div>';
     echo '<br/><br/>';
     
     if ($selected_payment_method === 'blockonomics') {
