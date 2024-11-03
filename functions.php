@@ -541,3 +541,28 @@ function modal() {
         <img id="plugin-client-modal-loader" src="' . esc_attr( get_stylesheet_directory_uri() . '/images/loader.gif' ) . '" />
     </div>';
 }
+add_action('wp_ajax_add_addon_to_cart', 'add_addon_to_cart');
+add_action('wp_ajax_nopriv_add_addon_to_cart', 'add_addon_to_cart');
+
+function add_addon_to_cart() {
+    // Check if product ID and variation ID are set
+    if (isset($_POST['product_id'], $_POST['variation_id'])) {
+        $product_id = intval($_POST['product_id']);
+        $variation_id = intval($_POST['variation_id']);
+        $quantity = 1; // You can adjust the quantity if needed
+
+        // Add the product to the WooCommerce cart
+        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id);
+
+        if ($cart_item_key) {
+            wp_send_json_success(['cart_item_key' => $cart_item_key]);
+        } else {
+            wp_send_json_error('Failed to add product to cart');
+        }
+    } else {
+        wp_send_json_error('Invalid product or variation ID');
+    }
+
+    wp_die();
+}
+
