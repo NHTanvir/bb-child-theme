@@ -212,48 +212,59 @@ function custom_checkout_columns_start() {
     echo "</div>";
     
     echo "<div class='addons-body'>";
-        $product_in_cart         = false;
-        $matching_variation_id  = null;
-        
-        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-            if ($cart_item['product_id'] == 11948) {
-                $product_in_cart = true;
-                $matching_variation_id = $cart_item['variation_id']; 
-                break; 
-            }
+    $product_in_cart         = false;
+    $matching_variation_id  = null;
+    
+    // Check if the main product is in the cart
+    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+        if ($cart_item['product_id'] == 11948) {
+            $product_in_cart = true;
+            $matching_variation_id = $cart_item['variation_id']; 
+            break; 
         }
+    }
+    
+    $available_variations = $addon_product->get_available_variations();
+    
+    if (!empty($available_variations)) {
+        echo '<select name="addon_option" class="addon-option-select">';
+            echo '<option value="nytt-konto" selected>Nytt konto</option>';
+            echo '<option value="förnyelse">Förnyelse</option>';
+        echo '</select>';
+    
+        echo '<select name="addon_variation" class="addon-variation-select">';
         
-        $available_variations = $addon_product->get_available_variations();
-        if (!empty($available_variations)) {
-            echo '<select name="addon_option" class="addon-option-select">';
-                echo '<option value="nytt-konto" selected>Nytt konto</option>';
-                echo '<option value="förnyelse">Förnyelse</option>';
-            echo '</select>';
-        
-            echo '<select name="addon_variation" class="addon-variation-select">';
-            
-            if ($product_in_cart && $matching_variation_id) {
-
-                $variation_obj = wc_get_product($matching_variation_id);
+        // Check if the main product is in the cart
+        if ($product_in_cart) {
+            // Loop through available variations for the add-on product
+            foreach ($available_variations as $variation) {
+                $variation_obj = wc_get_product($variation['variation_id']);
                 $attributes = $variation_obj->get_attributes();
-                $variation_name = implode(', ', array_values($attributes)); 
-        
-                echo '<option value="' . esc_attr($matching_variation_id) . '">' . esc_html($variation_name) . '</option>';
-            } else {
-                foreach ($available_variations as $variation) {
-                    $variation_obj = wc_get_product($variation['variation_id']);
-                    $attributes = $variation_obj->get_attributes();
-                    $variation_name = implode(', ', array_values($attributes)); 
-        
+                $variation_name = implode(', ', array_values($attributes));
+    
+                // Check if the variation ID matches the one in the cart
+                if ($variation['variation_id'] === $matching_variation_id) {
+                    echo '<option value="' . esc_attr($variation['variation_id']) . '" selected>' . esc_html($variation_name) . '</option>';
+                } else {
                     echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
                 }
             }
-            
-            echo '</select>';
-            echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress'>";
-        } 
+        } else {
+            // If the main product is not in the cart, display all variations
+            foreach ($available_variations as $variation) {
+                $variation_obj = wc_get_product($variation['variation_id']);
+                $attributes = $variation_obj->get_attributes();
+                $variation_name = implode(', ', array_values($attributes));
+                echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
+            }
+        }
         
+        echo '</select>';
+        
+        echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress'>";
         echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
+    }
+    
     echo "</div>";
     echo '</div>';
     
@@ -588,15 +599,35 @@ add_action('wp_ajax_nopriv_add_addon_to_cart', 'add_addon_to_cart');
 
 function add_addon_to_cart() {
     // Check if product ID and variation ID are set
-    if (isset($_POST['product_id'], $_POST['variation_id'])) {
+    if (isset($_POST['product_id'], $_POST['variation_id'], $_POST['addon_option'])) {
         $product_id = intval($_POST['product_id']);
         $variation_id = intval($_POST['variation_id']);
+        $addon_option = sanitize_text_field($_POST['addon_option']);
+        $mac_address = isset($_POST['mac_address']) ? sanitize_text_field($_POST['mac_address']) : '';
+
         $quantity = 1; // You can adjust the quantity if needed
+
+        // Get the product
+        $product = wc_get_product($product_id);
+        if (!$product || !$product->is_in_stock()) {
+            wp_send_json_error('Product is out of stock');
+            return;
+        }
+
+        // Check if the variation exists
+        if ($variation_id && !$product->has_child()) {
+            wp_send_json_error('Invalid variation ID');
+            return;
+        }
 
         // Add the product to the WooCommerce cart
         $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id);
 
         if ($cart_item_key) {
+            // Store addon option and MAC address in cart item data
+            WC()->cart->cart_contents[$cart_item_key]['addon_option'] = $addon_option;
+            WC()->cart->cart_contents[$cart_item_key]['mac_address'] = $mac_address;
+
             wp_send_json_success(['cart_item_key' => $cart_item_key]);
         } else {
             wp_send_json_error('Failed to add product to cart');
@@ -607,6 +638,7 @@ function add_addon_to_cart() {
 
     wp_die();
 }
+
 
 add_action('wp_ajax_remove_cart_item', 'remove_cart_item');
 add_action('wp_ajax_nopriv_remove_cart_item', 'remove_cart_item');
@@ -620,4 +652,24 @@ function remove_cart_item() {
         wp_send_json_error();
     }
     wp_die(); // Terminate and return proper response
+}
+
+add_filter('woocommerce_order_item_display_meta_key', 'custom_order_item_display_meta_key', 10, 4);
+add_filter('woocommerce_order_item_display_meta_value', 'custom_order_item_display_meta_value', 10, 4);
+
+function custom_order_item_display_meta_key($display_key, $meta, $item, $order) {
+    if ($meta->key === 'addon_option') {
+        return __('Add-on Option', 'text-domain');
+    }
+    if ($meta->key === 'mac_address') {
+        return __('MAC Address', 'text-domain');
+    }
+    return $display_key;
+}
+
+function custom_order_item_display_meta_value($display_value, $meta, $item, $order) {
+    if ($meta->key === 'addon_option' || $meta->key === 'mac_address') {
+        return $meta->value;
+    }
+    return $display_value;
 }

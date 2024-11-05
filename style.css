@@ -94,26 +94,26 @@ template: bb-theme
 .wc_payment_method {
     display: none;
 }
-.payment_method_blockonomics{
+.payment_method_blockonomics {
     display: block;
 }
 .desktop-table {
-    display: table; 
+    display: table;
 }
 .mobile-table {
-    display: none; 
+    display: none;
 }
 
 .payment-type-delayed .payment-box-wrapper .payment-type-box:nth-child(1) {
-    border: 0.93px solid #FF9D00 !important;
-    background: #FF9D001A;
+    border: 0.93px solid #ff9d00 !important;
+    background: #ff9d001a;
     border-radius: 10px;
     padding: 8px;
 }
 
 .payment-type-direct .payment-box-wrapper .payment-type-box:nth-child(2) {
-background: #ECFFF5 !important;
-    border: 0.93px solid #32DD81 !important;
+    background: #ecfff5 !important;
+    border: 0.93px solid #32dd81 !important;
     border-radius: 10px;
     padding: 8px;
 }
@@ -123,31 +123,37 @@ background: #ECFFF5 !important;
 }
 .payment-type-box {
     border-radius: 10px;
-    border: 0.93px solid #CBCBCB;
+    border: 0.93px solid #cbcbcb;
     padding: 8px;
-width: 50%;
+    width: 50%;
 }
- .payment-box-wrapper .payment-type-box .payment-type-content h4 {
+.payment-box-wrapper .payment-type-box .payment-type-content h4 {
     color: #838383;
     font-size: 16px;
     font-weight: 700;
 }
-.payment-type-delayed .payment-box-wrapper .payment-type-box:nth-child(1) .payment-type-content h4 {
+.payment-type-delayed
+    .payment-box-wrapper
+    .payment-type-box:nth-child(1)
+    .payment-type-content
+    h4 {
     font-weight: 600 !important;
     color: #000;
     font-size: 16px;
 }
-.payment-type-direct  .payment-box-wrapper .payment-type-box:nth-child(2) .payment-type-content h4 {
+.payment-type-direct
+    .payment-box-wrapper
+    .payment-type-box:nth-child(2)
+    .payment-type-content
+    h4 {
     font-weight: 600 !important;
     color: #000;
     font-size: 16px;
 }
-.woocommerce-checkout #payment ul.payment_methods li label>img:last-child {
+.woocommerce-checkout #payment ul.payment_methods li label > img:last-child {
     display: none;
 }
-.bitcoin-payments-message-below{
-    display:none !important;
-}
+
 @media (max-width: 768px) {
     .desktop-table {
         display: none; /* Hide for mobile */

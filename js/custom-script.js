@@ -125,11 +125,34 @@ jQuery(document).ready(function ($) {
             },
         });
     });
+    // Function to toggle MAC address input visibility
+    function toggleMacAddressInput() {
+        var selectedOption = $(".addon-option-select").val();
+        if (selectedOption === "förnyelse") {
+            $(".addon-mac-address").show(); // Show the MAC address input
+        } else {
+            $(".addon-mac-address").hide(); // Hide the MAC address input
+        }
+    }
+
+    // Call the function on page load
+    $(document).ready(function () {
+        toggleMacAddressInput(); // Check the initial state on page load
+    });
+
+    // Toggle MAC address input visibility based on selected option
+    $(".addon-option-select").on("change", function () {
+        toggleMacAddressInput(); // Call the function on change
+    });
+
+    // Handle the Add to Cart button click event
     $(".add-addon-to-cart").on("click", function (e) {
         e.preventDefault();
 
         var product_id = $(this).data("product_id");
         var variation_id = $(".addon-variation-select").val();
+        var addon_option = $(".addon-option-select").val(); // Get the selected option
+        var mac_address = $(".addon-mac-address").val(); // Get the MAC address
 
         $.ajax({
             url: wc_add_to_cart_params.ajax_url,
@@ -138,6 +161,8 @@ jQuery(document).ready(function ($) {
                 action: "add_addon_to_cart",
                 product_id: product_id,
                 variation_id: variation_id,
+                addon_option: addon_option, // Include addon option
+                mac_address: mac_address, // Include MAC address
             },
             success: function (response) {
                 if (response.success) {
@@ -146,6 +171,7 @@ jQuery(document).ready(function ($) {
             },
         });
     });
+
     $(".remove-cart").on("click", function () {
         var cartItemKey = $(this).data("cart-item-key");
         pc_modal(true);
