@@ -205,20 +205,41 @@ function custom_checkout_columns_start() {
         echo '</table>';
     echo '</div>';
     echo '<div class="addons-section">';
-        echo "<div class='addons-head'>";
-            echo '<h6 class="method">'. $addon_product->get_title() .'</h6>';
-            echo "<img src='https://iptvutanbox.com/wp-content/uploads/2024/08/info-1.svg'>";
-            echo '<p>Du kan lägga till hur många extra konton du vill.</p>';
-        echo "</div>";
+    echo "<div class='addons-head'>";
+        echo '<h6 class="method">'. $addon_product->get_title() .'</h6>';
+        echo "<img src='https://iptvutanbox.com/wp-content/uploads/2024/08/info-1.svg'>";
+        echo '<p>Du kan lägga till hur många extra konton du vill.</p>';
+    echo "</div>";
+    
+    echo "<div class='addons-body'>";
+        $product_in_cart         = false;
+        $matching_variation_id  = null;
+        
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            if ($cart_item['product_id'] == 11948) {
+                $product_in_cart = true;
+                $matching_variation_id = $cart_item['variation_id']; 
+                break; 
+            }
+        }
+        
+        $available_variations = $addon_product->get_available_variations();
+        if (!empty($available_variations)) {
+            echo '<select name="addon_option" class="addon-option-select">';
+                echo '<option value="nytt-konto" selected>Nytt konto</option>';
+                echo '<option value="förnyelse">Förnyelse</option>';
+            echo '</select>';
+        
+            echo '<select name="addon_variation" class="addon-variation-select">';
+            
+            if ($product_in_cart && $matching_variation_id) {
 
-        echo "<div class='addons-body'>";
-            $available_variations = $addon_product->get_available_variations();
-            if (!empty($available_variations)) {
-                echo '<select name="addon_option" class="addon-option-select">';
-                    echo '<option value="nytt-konto" selected>Nytt konto </option>';
-                    echo '<option value="Förnyelse">Förnyelse</option>';
-                echo '</select>';
-                echo '<select name="addon_variation" class="addon-variation-select">';
+                $variation_obj = wc_get_product($matching_variation_id);
+                $attributes = $variation_obj->get_attributes();
+                $variation_name = implode(', ', array_values($attributes)); 
+        
+                echo '<option value="' . esc_attr($matching_variation_id) . '">' . esc_html($variation_name) . '</option>';
+            } else {
                 foreach ($available_variations as $variation) {
                     $variation_obj = wc_get_product($variation['variation_id']);
                     $attributes = $variation_obj->get_attributes();
@@ -226,13 +247,16 @@ function custom_checkout_columns_start() {
         
                     echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
                 }
-                echo '</select>';
-                echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress'>";
-
-            } 
-            echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
-        echo "</div>";
+            }
+            
+            echo '</select>';
+            echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress'>";
+        } 
+        
+        echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
+    echo "</div>";
     echo '</div>';
+    
     echo '<br/><br/>';
     
     if ($selected_payment_method === 'blockonomics') {
