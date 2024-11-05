@@ -654,22 +654,43 @@ function remove_cart_item() {
     wp_die(); // Terminate and return proper response
 }
 
-add_filter('woocommerce_order_item_display_meta_key', 'custom_order_item_display_meta_key', 10, 4);
-add_filter('woocommerce_order_item_display_meta_value', 'custom_order_item_display_meta_value', 10, 4);
+// Step 1: Save custom data as order meta when order is created
+add_action('woocommerce_checkout_create_order_line_item', 'save_custom_data_to_order_meta', 10, 4);
+function save_custom_data_to_order_meta($item, $cart_item_key, $values, $order) {
+    // Check and save the `addon_option`
+    if (isset($values['addon_option'])) {
+        $item->add_meta_data('addon_option', $values['addon_option'], true);
+    }
 
-function custom_order_item_display_meta_key($display_key, $meta, $item, $order) {
-    if ($meta->key === 'addon_option') {
-        return __('Add-on Option', 'text-domain');
+    // Check and save the `mac_address`
+    if (isset($values['mac_address'])) {
+        $item->add_meta_data('mac_address', $values['mac_address'], true);
     }
-    if ($meta->key === 'mac_address') {
-        return __('MAC Address', 'text-domain');
-    }
-    return $display_key;
 }
 
-function custom_order_item_display_meta_value($display_value, $meta, $item, $order) {
-    if ($meta->key === 'addon_option' || $meta->key === 'mac_address') {
-        return $meta->value;
+
+// Step 2: Display custom meta data in admin order view
+add_action('woocommerce_admin_order_data_after_order_details', 'display_custom_order_meta_in_admin');
+function display_custom_order_meta_in_admin($order) {
+    $addon_option = $order->get_meta('addon_option');
+    $mac_address = $order->get_meta('mac_address');
+
+    if ($addon_option) {
+        echo '<p><strong>Addon Option:</strong> ' . esc_html($addon_option) . '</p>';
     }
-    return $display_value;
+    if ($mac_address) {
+        echo '<p><strong>MAC Address:</strong> ' . esc_html($mac_address) . '</p>';
+    }
 }
+// Hook to add custom data to cart items
+add_filter('woocommerce_add_cart_item_data', 'add_custom_data_to_cart_item', 10, 2);
+function add_custom_data_to_cart_item($cart_item_data, $product_id) {
+    if (isset($_POST['addon_option'])) {
+        $cart_item_data['addon_option'] = sanitize_text_field($_POST['addon_option']);
+    }
+    if (isset($_POST['mac_address'])) {
+        $cart_item_data['mac_address'] = sanitize_text_field($_POST['mac_address']);
+    }
+    return $cart_item_data;
+}
+
