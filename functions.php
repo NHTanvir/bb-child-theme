@@ -194,7 +194,7 @@ function custom_checkout_columns_start() {
                     echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
                 }
                 echo '<td>';
-                    echo "<button type='button' class='remove-cart'>";
+                    echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
                         echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
                     echo '</button>';
                 echo '</td>';
@@ -584,3 +584,16 @@ function add_addon_to_cart() {
     wp_die();
 }
 
+add_action('wp_ajax_remove_cart_item', 'remove_cart_item');
+add_action('wp_ajax_nopriv_remove_cart_item', 'remove_cart_item');
+
+function remove_cart_item() {
+    $cart_item_key = isset($_POST['cart_item_key']) ? $_POST['cart_item_key'] : '';
+    
+    if (WC()->cart->remove_cart_item($cart_item_key)) {
+        wp_send_json_success();
+    } else {
+        wp_send_json_error();
+    }
+    wp_die(); // Terminate and return proper response
+}

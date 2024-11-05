@@ -146,4 +146,21 @@ jQuery(document).ready(function ($) {
             },
         });
     });
+    $(".remove-cart").on("click", function () {
+        var cartItemKey = $(this).data("cart-item-key");
+        pc_modal(true);
+        $.ajax({
+            url: wc_add_to_cart_params.ajax_url,
+            type: "POST",
+            data: {
+                action: "remove_cart_item",
+                cart_item_key: cartItemKey,
+            },
+            success: function (response) {
+                if (response.success) {
+                    update_totals_based_on_payment_method();
+                }
+            },
+        });
+    });
 });
