@@ -213,13 +213,15 @@ function custom_checkout_columns_start() {
     
     echo "<div class='addons-body'>";
     $product_in_cart         = false;
-    $matching_variation_id  = null;
+    $matching_variation_name = ''; // Store the matching variation name
     
     // Check if the main product is in the cart
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         if ($cart_item['product_id'] == 11948) {
             $product_in_cart = true;
-            $matching_variation_id = $cart_item['variation_id']; 
+            $variation_obj = wc_get_product($cart_item['variation_id']);
+            $attributes = $variation_obj->get_attributes();
+            $matching_variation_name = implode(', ', array_values($attributes)); 
             break; 
         }
     }
@@ -234,19 +236,16 @@ function custom_checkout_columns_start() {
     
         echo '<select name="addon_variation" class="addon-variation-select">';
         
-        // Check if the main product is in the cart
+
         if ($product_in_cart) {
-            // Loop through available variations for the add-on product
+
             foreach ($available_variations as $variation) {
                 $variation_obj = wc_get_product($variation['variation_id']);
                 $attributes = $variation_obj->get_attributes();
                 $variation_name = implode(', ', array_values($attributes));
     
-                // Check if the variation ID matches the one in the cart
-                if ($variation['variation_id'] === $matching_variation_id) {
+                if ($variation_name === $matching_variation_name) {
                     echo '<option value="' . esc_attr($variation['variation_id']) . '" selected>' . esc_html($variation_name) . '</option>';
-                } else {
-                    echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
                 }
             }
         } else {
@@ -261,9 +260,10 @@ function custom_checkout_columns_start() {
         
         echo '</select>';
         
-        echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress'>";
+        echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress' style='display: none;'>";
         echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
     }
+    
     
     echo "</div>";
     echo '</div>';

@@ -148,7 +148,7 @@ jQuery(document).ready(function ($) {
     // Handle the Add to Cart button click event
     $(".add-addon-to-cart").on("click", function (e) {
         e.preventDefault();
-
+        pc_modal(true);
         var product_id = $(this).data("product_id");
         var variation_id = $(".addon-variation-select").val();
         var addon_option = $(".addon-option-select").val(); // Get the selected option
