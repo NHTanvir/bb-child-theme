@@ -262,7 +262,7 @@ function custom_checkout_columns_start() {
         echo '</select>';
         
         echo "<input type='text' name='addon_mac_address' class='addon-mac-address red' placeholder='Användarnamn eller MAC-adress' style='display: none;'>";
-        echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
+        echo '<button type="button" class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
     }
     
     
@@ -658,31 +658,34 @@ function remove_cart_item() {
 // Step 1: Save custom data as order meta when order is created
 add_action('woocommerce_checkout_create_order_line_item', 'save_custom_data_to_order_meta', 10, 4);
 function save_custom_data_to_order_meta($item, $cart_item_key, $values, $order) {
-    // Check and save the `addon_option`
     if (isset($values['addon_option'])) {
-        $item->add_meta_data('addon_option', $values['addon_option'], true);
+        $item->add_meta_data('Addon Option', $values['addon_option'], true);
     }
 
-    // Check and save the `mac_address`
     if (isset($values['mac_address'])) {
-        $item->add_meta_data('mac_address', $values['mac_address'], true);
+        $item->add_meta_data('MAC Address', $values['mac_address'], true);
     }
 }
 
 
 // Step 2: Display custom meta data in admin order view
-add_action('woocommerce_admin_order_data_after_order_details', 'display_custom_order_meta_in_admin');
-function display_custom_order_meta_in_admin($order) {
-    $addon_option = $order->get_meta('addon_option');
-    $mac_address = $order->get_meta('mac_address');
+add_action('woocommerce_before_order_itemmeta', 'display_custom_order_item_meta_in_admin', 10, 3);
+function display_custom_order_item_meta_in_admin($item_id, $item, $order) {
+    // Get addon_option and mac_address for each line item
+    $addon_option = $item->get_meta('addon_option');
+    $mac_address = $item->get_meta('mac_address');
 
+    // Display Addon Option if it exists
     if ($addon_option) {
         echo '<p><strong>Addon Option:</strong> ' . esc_html($addon_option) . '</p>';
     }
+
+    // Display MAC Address if it exists
     if ($mac_address) {
         echo '<p><strong>MAC Address:</strong> ' . esc_html($mac_address) . '</p>';
     }
 }
+
 // Hook to add custom data to cart items
 add_filter('woocommerce_add_cart_item_data', 'add_custom_data_to_cart_item', 10, 2);
 function add_custom_data_to_cart_item($cart_item_data, $product_id) {
