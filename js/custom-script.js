@@ -171,8 +171,7 @@ jQuery(document).ready(function ($) {
             },
         });
     });
-
-    $(".remove-cart").on("click", function () {
+    $(document).on("click", ".remove-cart", function () {
         var cartItemKey = $(this).data("cart-item-key");
         pc_modal(true);
         $.ajax({

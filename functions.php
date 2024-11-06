@@ -514,7 +514,7 @@ echo '<table class="product-table desktop-table">';
             echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
         }
         echo '<td>';
-            echo "<button type='button' class='remove-cart'>";
+            echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
                 echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
             echo '</button>';
         echo '</td>';
