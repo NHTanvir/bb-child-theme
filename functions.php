@@ -207,8 +207,9 @@ function custom_checkout_columns_start() {
     echo '<div class="addons-section">';
     echo "<div class='addons-head'>";
         echo '<h6 class="method">'. $addon_product->get_title() .'</h6>';
+        echo "<p>";
         echo "<img src='https://iptvutanbox.com/wp-content/uploads/2024/08/info-1.svg'>";
-        echo '<p>Du kan lägga till hur många extra konton du vill.</p>';
+        echo 'Du kan lägga till hur många extra konton du vill.</p>';
     echo "</div>";
     
     echo "<div class='addons-body'>";
