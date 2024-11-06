@@ -190,6 +190,7 @@ jQuery(document).ready(function ($) {
                 mac_address: mac_address,
             },
             success: function (response) {
+                $(".addon-mac-address").val("");
                 if (response.success) {
                     update_totals_based_on_payment_method();
                 }
