@@ -128,31 +128,56 @@ jQuery(document).ready(function ($) {
     // Function to toggle MAC address input visibility
     function toggleMacAddressInput() {
         var selectedOption = $(".addon-option-select").val();
+        var macAddressInput = $(".addon-mac-address");
+
         if (selectedOption === "förnyelse") {
-            $(".addon-mac-address").show(); // Show the MAC address input
+            macAddressInput.show();
         } else {
-            $(".addon-mac-address").hide(); // Hide the MAC address input
+            macAddressInput.hide().removeClass("red"); // Hide and remove red border
         }
     }
 
-    // Call the function on page load
+    function validateMacAddress() {
+        var selectedOption = $(".addon-option-select").val();
+        var macAddressInput = $(".addon-mac-address");
+
+        if (selectedOption === "förnyelse" && !macAddressInput.val()) {
+            macAddressInput.addClass("red"); // Add red border if empty
+            return false;
+        } else {
+            macAddressInput.removeClass("red"); // Remove red border if filled
+            return true;
+        }
+    }
+
     $(document).ready(function () {
-        toggleMacAddressInput(); // Check the initial state on page load
+        toggleMacAddressInput(); // Check initial state on page load
+
+        // Remove "red" class when user starts typing
+        $(".addon-mac-address").on("input", function () {
+            if ($(this).val()) {
+                $(this).removeClass("red");
+            } else {
+                $(this).addClass("red");
+            }
+        });
     });
 
-    // Toggle MAC address input visibility based on selected option
     $(".addon-option-select").on("change", function () {
-        toggleMacAddressInput(); // Call the function on change
+        toggleMacAddressInput(); // Toggle MAC address input visibility on change
     });
 
-    // Handle the Add to Cart button click event
     $(".add-addon-to-cart").on("click", function (e) {
-        e.preventDefault();
-        pc_modal(true);
+        if (!validateMacAddress()) {
+            e.preventDefault(); // Prevent adding to cart if MAC address is missing for "förnyelse"
+            return;
+        }
+
+        pc_modal(true); // Show modal
         var product_id = $(this).data("product_id");
         var variation_id = $(".addon-variation-select").val();
-        var addon_option = $(".addon-option-select").val(); // Get the selected option
-        var mac_address = $(".addon-mac-address").val(); // Get the MAC address
+        var addon_option = $(".addon-option-select").val();
+        var mac_address = $(".addon-mac-address").val();
 
         $.ajax({
             url: wc_add_to_cart_params.ajax_url,
@@ -161,8 +186,8 @@ jQuery(document).ready(function ($) {
                 action: "add_addon_to_cart",
                 product_id: product_id,
                 variation_id: variation_id,
-                addon_option: addon_option, // Include addon option
-                mac_address: mac_address, // Include MAC address
+                addon_option: addon_option,
+                mac_address: mac_address,
             },
             success: function (response) {
                 if (response.success) {
@@ -171,6 +196,7 @@ jQuery(document).ready(function ($) {
             },
         });
     });
+
     $(document).on("click", ".remove-cart", function () {
         var cartItemKey = $(this).data("cart-item-key");
         pc_modal(true);

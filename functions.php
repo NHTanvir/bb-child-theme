@@ -260,7 +260,7 @@ function custom_checkout_columns_start() {
         
         echo '</select>';
         
-        echo "<input type='text' name='addon_mac_address' class='addon-mac-address' placeholder='Användarnamn eller MAC-adress' style='display: none;'>";
+        echo "<input type='text' name='addon_mac_address' class='addon-mac-address red' placeholder='Användarnamn eller MAC-adress' style='display: none;'>";
         echo '<button class="button add-addon-to-cart" data-product_id="' . esc_attr($addon_product->get_id()) . '">Lägg till</button>';
     }
     

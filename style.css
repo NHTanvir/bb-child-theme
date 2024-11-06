@@ -1,7 +1,7 @@
 /*
 Theme Name: Beaver Builder Child Theme
 Theme URI: http://www.wpbeaverbuilder.com
-Version: 1.2
+Version: 1.2.1
 Description: An example child theme that can be used as a starting point for custom development.
 Author: The Beaver Builder Team
 Author URI: http://www.fastlinemedia.com
@@ -153,7 +153,12 @@ template: bb-theme
 .woocommerce-checkout #payment ul.payment_methods li label > img:last-child {
     display: none;
 }
-
+.addon-mac-address {
+    display: none;
+}
+.red {
+    border: 2px solid red !important;
+}
 @media (max-width: 768px) {
     .desktop-table {
         display: none; /* Hide for mobile */
