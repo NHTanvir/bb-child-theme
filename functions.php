@@ -125,15 +125,10 @@ function custom_checkout_columns_start() {
                 $_product           = $cart_item['data'];
                 $variation_id       = $cart_item['variation_id']; 
                 $variation_product  = wc_get_product($variation_id); 
-                $variation_data     = $_product->get_variation_attributes();
-                $variation_name     = reset($variation_data);
                 $price              = $variation_product->get_price();
-                $product            = wc_get_product( $_product->get_parent_id() );
-                $product_name       = $product->get_name();
+                $product_name       = $_product->get_name();
 
                 if ($_product->is_type('variation')) {
-                    $variation_data = $_product->get_variation_attributes();
-                    $variation_name = reset($variation_data);
                     echo '<tr>';
                         echo '<td>Produkt</td>';
                         echo '<td>' . $product_name . '</td>';
@@ -145,10 +140,6 @@ function custom_checkout_columns_start() {
                             echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
                             echo '</div>';
                         echo '</td>';
-                    echo '</tr>';
-                    echo '<tr>';
-                        echo '<td>Duration</td>';
-                        echo '<td>' . $variation_name . '</td>';
                     echo '</tr>';
                     echo '<tr>';
                     echo '<td>Pris i SEK</td>';
@@ -163,7 +154,6 @@ function custom_checkout_columns_start() {
             echo '<tr>';
             echo '<th>Produkt</th>';
             echo '<th>Quantity</th>';
-            echo '<th>Duration</th>';
             echo '<th>Pris i SEK</th>';
            
             echo "<th></th>";
@@ -175,15 +165,9 @@ function custom_checkout_columns_start() {
                 $_product           = $cart_item['data'];
                 $variation_id       = $cart_item['variation_id']; 
                 $variation_product  = wc_get_product($variation_id); 
-                $variation_data     = $_product->get_variation_attributes();
-                $variation_name     = reset($variation_data);
                 $price              = $variation_product->get_price();
-                $product            = wc_get_product( $_product->get_parent_id() );
-                $product_name       = $product->get_name();
-                if ($_product->is_type('variation')) {
-                    $variation_data = $_product->get_variation_attributes();
-                    $variation_name = reset($variation_data);
-                }
+                $product_name       = $_product->get_name();
+
                 echo '<tr>';
                 echo '<td>' . $product_name . '</td>';
                 echo '<td>';
@@ -191,7 +175,6 @@ function custom_checkout_columns_start() {
                         echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
                     echo '</div>';
                 echo '</td>';
-                echo '<td>' . $variation_name . '</td>';
                 echo '<td>' . wc_price( $price ) . '</td>';
                 echo '<td>';
                     echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
@@ -441,14 +424,10 @@ function update_table_on_payment_method_change() {
         $_product           = $cart_item['data'];
         $variation_id       = $cart_item['variation_id']; 
         $variation_product  = wc_get_product($variation_id); 
-        $variation_data     = $_product->get_variation_attributes();
-        $variation_name     = reset($variation_data);
         $price              = $variation_product->get_price();
-        $product            = wc_get_product( $_product->get_parent_id() );
-        $product_name       = $product->get_name();
+        $product_name       = $_product->get_name();
+
         if ($_product->is_type('variation')) {
-            $variation_data = $_product->get_variation_attributes();
-            $variation_name = reset($variation_data);
             echo '<tr>';
                 echo '<td>Produkt</td>';
                 echo '<td>' . $product_name . '</td>';
@@ -460,10 +439,6 @@ function update_table_on_payment_method_change() {
                         echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
                     echo '</div>';
                 echo '</td>';
-            echo '</tr>';
-            echo '<tr>';
-                echo '<td>Duration</td>';
-                echo '<td>' . $variation_name . '</td>';
             echo '</tr>';
             echo '<tr>';
             echo '<td>Pris i SEK</td>';
@@ -478,7 +453,6 @@ echo '<table class="product-table desktop-table">';
     echo '<tr>';
     echo '<th>Produkt</th>';
     echo '<th>Quantity</th>';
-    echo '<th>Duration</th>';
     echo '<th>Pris i SEK</th>';
     echo "<th></th>";
     echo '</tr>';
@@ -489,16 +463,9 @@ echo '<table class="product-table desktop-table">';
         $_product           = $cart_item['data'];
         $variation_id       = $cart_item['variation_id']; 
         $variation_product  = wc_get_product($variation_id); 
-        $variation_data     = $_product->get_variation_attributes();
-        $variation_name     = reset($variation_data);
         $price              = $variation_product->get_price();
-        $product            = wc_get_product( $_product->get_parent_id() );
-        $product_name       = $product->get_name();
+        $product_name       = $_product->get_name();
 
-        if ($_product->is_type('variation')) {
-            $variation_data = $_product->get_variation_attributes();
-            $variation_name = reset($variation_data);
-        }
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
         echo '<td>';
@@ -506,7 +473,6 @@ echo '<table class="product-table desktop-table">';
                 echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
             echo '</div>';
         echo '</td>';
-        echo '<td>' . $variation_name . '</td>';
         echo '<td>' . wc_price( $price ) . '</td>';
         echo '<td>';
             echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
