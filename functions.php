@@ -165,9 +165,7 @@ function custom_checkout_columns_start() {
             echo '<th>Quantity</th>';
             echo '<th>Duration</th>';
             echo '<th>Pris i SEK</th>';
-            if ($selected_payment_method === 'blockonomics') {
-                echo '<th>Pris i BTC</th>'; 
-            }
+           
             echo "<th></th>";
             echo '</tr>';
             echo '</thead>';
@@ -190,9 +188,6 @@ function custom_checkout_columns_start() {
                 echo '</td>';
                 echo '<td>' . $variation_name . '</td>';
                 echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
-                if ($selected_payment_method === 'blockonomics') {
-                    echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
-                }
                 echo '<td>';
                     echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
                         echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
@@ -312,11 +307,6 @@ function custom_checkout_columns_end() {
     echo '</div>';
     echo '</div>';
 
-    echo '<div class="bitcoin-payments-message-below">';
-        echo '<p><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Group-66968.png">';
-        echo 'Den totala summan inkl. avgift ser du på nästa sida och ändras beroende på vilken utav kryptobörserna du väljer att betala ifrån.';
-        echo '</p>';
-    echo '</div>';
 }
 
 function add_custom_payment_message() {
@@ -486,9 +476,6 @@ echo '<table class="product-table desktop-table">';
     echo '<th>Quantity</th>';
     echo '<th>Duration</th>';
     echo '<th>Pris i SEK</th>';
-    if ($selected_payment_method === 'blockonomics') {
-        echo '<th>Pris i BTC</th>'; 
-    }
     echo "<th></th>";
     echo '</tr>';
     echo '</thead>';
@@ -511,9 +498,6 @@ echo '<table class="product-table desktop-table">';
         echo '</td>';
         echo '<td>' . $variation_name . '</td>';
         echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
-        if ($selected_payment_method === 'blockonomics') {
-            echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
-        }
         echo '<td>';
             echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
                 echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
