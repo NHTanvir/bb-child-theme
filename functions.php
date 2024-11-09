@@ -122,9 +122,15 @@ function custom_checkout_columns_start() {
     echo "<div class='table-wrapper'>";
         echo '<table class="product-table mobile-table">';
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                $_product = $cart_item['data'];
-                $product = wc_get_product( $_product->get_parent_id() );
-                $product_name = $product->get_name();
+                $_product           = $cart_item['data'];
+                $variation_id       = $cart_item['variation_id']; 
+                $variation_product  = wc_get_product($variation_id); 
+                $variation_data     = $_product->get_variation_attributes();
+                $variation_name     = reset($variation_data);
+                $price              = $variation_product->get_price();
+                $product            = wc_get_product( $_product->get_parent_id() );
+                $product_name       = $product->get_name();
+
                 if ($_product->is_type('variation')) {
                     $variation_data = $_product->get_variation_attributes();
                     $variation_name = reset($variation_data);
@@ -146,13 +152,7 @@ function custom_checkout_columns_start() {
                     echo '</tr>';
                     echo '<tr>';
                     echo '<td>Pris i SEK</td>';
-                    echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
-                    if ($selected_payment_method === 'blockonomics') {
-                        echo '<tr>';
-                        echo '<td>Pris i BTC</td>';
-                        echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
-                        echo '</tr>';
-                    }
+                    echo '<td>' . wc_price( $price ) . '</td>';
                 }
             }
                 
@@ -172,9 +172,14 @@ function custom_checkout_columns_start() {
             echo '<tbody>';
             
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                $_product = $cart_item['data'];
-                $product = wc_get_product( $_product->get_parent_id() );
-                $product_name = $product->get_name();
+                $_product           = $cart_item['data'];
+                $variation_id       = $cart_item['variation_id']; 
+                $variation_product  = wc_get_product($variation_id); 
+                $variation_data     = $_product->get_variation_attributes();
+                $variation_name     = reset($variation_data);
+                $price              = $variation_product->get_price();
+                $product            = wc_get_product( $_product->get_parent_id() );
+                $product_name       = $product->get_name();
                 if ($_product->is_type('variation')) {
                     $variation_data = $_product->get_variation_attributes();
                     $variation_name = reset($variation_data);
@@ -187,7 +192,7 @@ function custom_checkout_columns_start() {
                     echo '</div>';
                 echo '</td>';
                 echo '<td>' . $variation_name . '</td>';
-                echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+                echo '<td>' . wc_price( $price ) . '</td>';
                 echo '<td>';
                     echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
                         echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
@@ -433,9 +438,14 @@ function update_table_on_payment_method_change() {
 
     echo '<table class="product-table mobile-table">';
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-        $_product = $cart_item['data'];
-        $product = wc_get_product( $_product->get_parent_id() );
-        $product_name = $product->get_name();
+        $_product           = $cart_item['data'];
+        $variation_id       = $cart_item['variation_id']; 
+        $variation_product  = wc_get_product($variation_id); 
+        $variation_data     = $_product->get_variation_attributes();
+        $variation_name     = reset($variation_data);
+        $price              = $variation_product->get_price();
+        $product            = wc_get_product( $_product->get_parent_id() );
+        $product_name       = $product->get_name();
         if ($_product->is_type('variation')) {
             $variation_data = $_product->get_variation_attributes();
             $variation_name = reset($variation_data);
@@ -457,13 +467,7 @@ function update_table_on_payment_method_change() {
             echo '</tr>';
             echo '<tr>';
             echo '<td>Pris i SEK</td>';
-            echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
-            if ($selected_payment_method === 'blockonomics') {
-                echo '<tr>';
-                echo '<td>Pris i BTC</td>';
-                echo '<td>' . do_shortcode('[package-price-btc]') . '</td>';
-                echo '</tr>';
-            }
+            echo '<td>' . wc_price( $price ) . '</td>';
         }
     }
         
@@ -482,9 +486,15 @@ echo '<table class="product-table desktop-table">';
     echo '<tbody>';
     
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-        $_product = $cart_item['data'];
-        $product = wc_get_product( $_product->get_parent_id() );
-        $product_name = $product->get_name();
+        $_product           = $cart_item['data'];
+        $variation_id       = $cart_item['variation_id']; 
+        $variation_product  = wc_get_product($variation_id); 
+        $variation_data     = $_product->get_variation_attributes();
+        $variation_name     = reset($variation_data);
+        $price              = $variation_product->get_price();
+        $product            = wc_get_product( $_product->get_parent_id() );
+        $product_name       = $product->get_name();
+
         if ($_product->is_type('variation')) {
             $variation_data = $_product->get_variation_attributes();
             $variation_name = reset($variation_data);
@@ -497,7 +507,7 @@ echo '<table class="product-table desktop-table">';
             echo '</div>';
         echo '</td>';
         echo '<td>' . $variation_name . '</td>';
-        echo '<td>' . do_shortcode('[package-price-sek]') . '</td>';
+        echo '<td>' . wc_price( $price ) . '</td>';
         echo '<td>';
             echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
                 echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
