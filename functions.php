@@ -658,3 +658,93 @@ function add_custom_data_to_cart_item($cart_item_data, $product_id) {
     return $cart_item_data;
 }
 
+
+// Add the "Selected Products" menu in the WordPress admin
+function add_selected_products_menu() {
+    add_menu_page(
+        'Selected Products',          // Page title
+        'Selected Products',          // Menu title
+        'manage_options',             // Capability
+        'selected-products',          // Menu slug
+        'selected_products_settings', // Callback function
+        'dashicons-cart',             // Icon
+        4                             // Position
+    );
+}
+add_action('admin_menu', 'add_selected_products_menu');
+
+// Display the settings page content
+function selected_products_settings() {
+    ?>
+    <div class="wrap">
+        <h1>Selected Products</h1>
+        <form method="post" action="options.php">
+            <?php
+                settings_fields('selected_products_settings');
+                do_settings_sections('selected-products');
+                submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Register settings, sections, and fields
+function register_selected_products_settings() {
+    register_setting('selected_products_settings', 'main_product');
+    register_setting('selected_products_settings', 'addon_product');
+
+    add_settings_section(
+        'selected_products_section',
+        'Select Products',
+        null,
+        'selected-products'
+    );
+
+    add_settings_field(
+        'main_product',
+        'Main Product',
+        'main_product_select_field',
+        'selected-products',
+        'selected_products_section'
+    );
+
+    add_settings_field(
+        'addon_product',
+        'Addon Products',
+        'addon_product_select_field',
+        'selected-products',
+        'selected_products_section'
+    );
+}
+add_action('admin_init', 'register_selected_products_settings');
+
+// Display the main product select field
+function main_product_select_field() {
+    $main_product = get_option('main_product');
+    $products = get_posts(['post_type' => 'product', 'numberposts' => -1]);
+    ?>
+    <select name="main_product">
+        <option value="">Select a Main Product</option>
+        <?php foreach ($products as $product): ?>
+            <option value="<?php echo esc_attr($product->ID); ?>" <?php selected($main_product, $product->ID); ?>>
+                <?php echo esc_html($product->post_title); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
+
+function addon_product_select_field() {
+    $addon_product = get_option('addon_product');
+    $products = get_posts(['post_type' => 'product', 'numberposts' => -1]);
+    ?>
+    <select name="addon_product">
+        <?php foreach ($products as $product): ?>
+            <option value="<?php echo esc_attr($product->ID); ?>" <?php echo in_array($product->ID, (array) $addon_product) ? 'selected' : ''; ?>>
+                <?php echo esc_html($product->post_title); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
