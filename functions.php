@@ -550,39 +550,76 @@ add_action('wp_ajax_add_addon_to_cart', 'add_addon_to_cart');
 add_action('wp_ajax_nopriv_add_addon_to_cart', 'add_addon_to_cart');
 
 function add_addon_to_cart() {
-    // Check if product ID and variation ID are set
+
     if (isset($_POST['product_id'], $_POST['variation_id'], $_POST['addon_option'])) {
-        $product_id = intval($_POST['product_id']);
-        $variation_id = intval($_POST['variation_id']);
-        $addon_option = sanitize_text_field($_POST['addon_option']);
-        $mac_address = isset($_POST['mac_address']) ? sanitize_text_field($_POST['mac_address']) : '';
+        $addon_variation_id         = intval($_POST['variation_id']);
+        $addon_option               = sanitize_text_field($_POST['addon_option']);
+        $mac_address                = isset($_POST['mac_address']) ? sanitize_text_field($_POST['mac_address']) : '';
+        $quantity                   = 1;
+        $main_product_id            = get_option('main_product');
+        $addon_product_id           = get_option('addon_product');
+        $matching_variation_id      = null;
+        $main_product               = wc_get_product($main_product_id);
+        $addon_product              = wc_get_product($addon_product_id);
+        $main_available_variations  = $main_product->get_available_variations();
+        $addon_available_variations = $addon_product->get_available_variations();
+        $empty_cart                 = true;
 
-        $quantity = 1; // You can adjust the quantity if needed
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            $product_id     = $cart_item['product_id'];
+            $variation_id   = isset($cart_item['variation_id']) ? $cart_item['variation_id'] : null;
 
-        // Get the product
-        $product = wc_get_product($product_id);
-        if (!$product || !$product->is_in_stock()) {
-            wp_send_json_error('Product is out of stock');
-            return;
+            if( $main_product_id == $product_id ) {
+                $main_variation_obj     = wc_get_product($variation_id);
+                $attributes             = $main_variation_obj->get_attributes();
+                $main_variation_name    = implode(', ', array_values($attributes));
+                $addon_variation_obj    = wc_get_product($addon_variation_id);
+                $addon_attributes       = $addon_variation_obj->get_attributes();
+                $addon_variation_name   = implode(', ', array_values($addon_attributes));
+    
+                if( $addon_variation_name == $main_variation_name ) {
+                    $matching_variation_id  = $addon_variation_id;
+                    $add_product_to_cart    = $addon_product_id;
+                    $empty_cart             = false;
+                    break;
+                }  
+            }
         }
 
-        // Check if the variation exists
-        if ($variation_id && !$product->has_child()) {
-            wp_send_json_error('Invalid variation ID');
-            return;
+        if( $empty_cart ) {
+            foreach ($main_available_variations as $main_variation) {
+                $main_variation_obj     = wc_get_product($main_variation['variation_id']);
+                $attributes             = $main_variation_obj->get_attributes();
+                $main_variation_name    = implode(', ', array_values($attributes));
+                $addon_variation_obj    = wc_get_product($addon_variation_id);
+                $addon_attributes       = $addon_variation_obj->get_attributes();
+                $addon_variation_name   = implode(', ', array_values($addon_attributes));
+                if( $addon_variation_name == $main_variation_name ) {
+                    $matching_variation_id  = $main_variation['variation_id'];
+                    $add_product_to_cart    = $main_product_id;
+                    break;
+                }
+            }
         }
 
-        // Add the product to the WooCommerce cart
-        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id);
 
-        if ($cart_item_key) {
-            // Store addon option and MAC address in cart item data
-            WC()->cart->cart_contents[$cart_item_key]['addon_option'] = $addon_option;
-            WC()->cart->cart_contents[$cart_item_key]['mac_address'] = $mac_address;
+        if ($matching_variation_id) {
+            if( $empty_cart ) {
+                WC()->cart->empty_cart(); 
+            }
+  
+            $cart_item_key = WC()->cart->add_to_cart($add_product_to_cart, $quantity, $matching_variation_id);
 
-            wp_send_json_success(['cart_item_key' => $cart_item_key]);
+            if ($cart_item_key) {
+                WC()->cart->cart_contents[$cart_item_key]['addon_option'] = $addon_option;
+                WC()->cart->cart_contents[$cart_item_key]['mac_address'] = $mac_address;
+
+                wp_send_json_success(['cart_item_key' => $cart_item_key]);
+            } else {
+                wp_send_json_error('Failed to add main product to cart');
+            }
         } else {
-            wp_send_json_error('Failed to add product to cart');
+            wp_send_json_error('No matching main product variation found');
         }
     } else {
         wp_send_json_error('Invalid product or variation ID');
@@ -590,7 +627,6 @@ function add_addon_to_cart() {
 
     wp_die();
 }
-
 
 add_action('wp_ajax_remove_cart_item', 'remove_cart_item');
 add_action('wp_ajax_nopriv_remove_cart_item', 'remove_cart_item');
