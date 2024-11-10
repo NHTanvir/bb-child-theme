@@ -229,20 +229,9 @@ function custom_checkout_columns_start() {
                 $variation_obj = wc_get_product($variation['variation_id']);
                 $attributes = $variation_obj->get_attributes();
                 $variation_name = implode(', ', array_values($attributes));
-    
-                if ($variation_name === $matching_variation_name) {
-                    echo '<option value="' . esc_attr($variation['variation_id']) . '" selected>' . esc_html($variation_name) . '</option>';
-                }
-            }
-        } else {
-            // If the main product is not in the cart, display all variations
-            foreach ($available_variations as $variation) {
-                $variation_obj = wc_get_product($variation['variation_id']);
-                $attributes = $variation_obj->get_attributes();
-                $variation_name = implode(', ', array_values($attributes));
                 echo '<option value="' . esc_attr($variation['variation_id']) . '">' . esc_html($variation_name) . '</option>';
             }
-        }
+        } 
         
         echo '</select>';
         
