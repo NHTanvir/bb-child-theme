@@ -114,8 +114,8 @@ remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_f
 function custom_checkout_columns_start() {
 
     $selected_payment_method = WC()->session->get('chosen_payment_method');
-    $_addon_product = get_option('addon_product');
-    $addon_product  = wc_get_product( $_addon_product );
+    $addon_product_id   = get_option('addon_product');
+    $addon_product      = wc_get_product( $addon_product_id );
 
     echo '<div class="checkout-columns">';
     echo '<div class="checkout-left">';
@@ -128,6 +128,21 @@ function custom_checkout_columns_start() {
                 $variation_product  = wc_get_product($variation_id); 
                 $price              = $variation_product->get_price();
                 $product_name       = $_product->get_name();
+                $product_id         = $cart_item['product_id'];
+                if( $addon_product_id == $product_id ) {
+                    if (preg_match('/(\d+)\s*(dagar|månader)/', $product_name, $matches)) {
+                        $duration = (int) $matches[1];
+                        $unit = $matches[2];
+                    
+                        // Modify the product name based on the duration
+                        if ($unit == 'dagar') {
+                            $months = ceil($duration / 30);
+                            $product_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $product_name);
+                        } elseif ($unit == 'månader') {
+                            $product_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $product_name);
+                        }
+                    }
+                }
 
                 if ($_product->is_type('variation')) {
                     echo '<tr>';
@@ -168,6 +183,20 @@ function custom_checkout_columns_start() {
                 $variation_product  = wc_get_product($variation_id); 
                 $price              = $variation_product->get_price();
                 $product_name       = $_product->get_name();
+                $product_id         = $cart_item['product_id'];
+                if( $addon_product_id == $product_id ) {
+                    if (preg_match('/(\d+)\s*(dagar|månader)/', $product_name, $matches)) {
+                        $duration   = (int) $matches[1]; 
+                        $unit       = $matches[2]; 
+                        
+                        if ($unit == 'dagar') {
+                            $months = ceil($duration / 30);
+                            $product_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $product_name);
+                        } elseif ($unit == 'månader') {
+                            $product_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $product_name);
+                        }
+                    }
+                }
 
                 echo '<tr>';
                 echo '<td>' . $product_name . '</td>';
@@ -408,8 +437,9 @@ add_action('wp_ajax_update_table_on_payment_method_change', 'update_table_on_pay
 add_action('wp_ajax_nopriv_update_table_on_payment_method_change', 'update_table_on_payment_method_change');
 
 function update_table_on_payment_method_change() {
-    $selected_payment_method = sanitize_text_field($_POST['payment_method']);
-
+    $selected_payment_method    = sanitize_text_field($_POST['payment_method']);
+    $addon_product_id           = get_option('addon_product');
+    $addon_product              = wc_get_product( $addon_product_id );
     echo '<table class="product-table mobile-table">';
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product           = $cart_item['data'];
@@ -417,6 +447,20 @@ function update_table_on_payment_method_change() {
         $variation_product  = wc_get_product($variation_id); 
         $price              = $variation_product->get_price();
         $product_name       = $_product->get_name();
+        $product_id         = $cart_item['product_id'];
+        if( $addon_product_id == $product_id ) {
+            if (preg_match('/(\d+)\s*(dagar|månader)/', $product_name, $matches)) {
+                $duration   = (int) $matches[1]; 
+                $unit       = $matches[2]; 
+                
+                if ($unit == 'dagar') {
+                    $months = ceil($duration / 30);
+                    $product_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $product_name);
+                } elseif ($unit == 'månader') {
+                    $product_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $product_name);
+                }
+            }
+        }
 
         if ($_product->is_type('variation')) {
             echo '<tr>';
@@ -456,6 +500,20 @@ echo '<table class="product-table desktop-table">';
         $variation_product  = wc_get_product($variation_id); 
         $price              = $variation_product->get_price();
         $product_name       = $_product->get_name();
+        $product_id         = $cart_item['product_id'];
+        if( $addon_product_id == $product_id ) {
+            if (preg_match('/(\d+)\s*(dagar|månader)/', $product_name, $matches)) {
+                $duration   = (int) $matches[1]; 
+                $unit       = $matches[2]; 
+                
+                if ($unit == 'dagar') {
+                    $months = ceil($duration / 30);
+                    $product_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $product_name);
+                } elseif ($unit == 'månader') {
+                    $product_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $product_name);
+                }
+            }
+        }
 
         echo '<tr>';
         echo '<td>' . $product_name . '</td>';
