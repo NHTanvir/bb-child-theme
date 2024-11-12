@@ -452,16 +452,18 @@ function update_table_on_payment_method_change() {
         $price              = $variation_product->get_price();
         $product_name       = $_product->get_name();
         $product_id         = $cart_item['product_id'];
+        $variation_data     = $_product->get_variation_attributes();
+        $variation_name     = reset($variation_data);
         if( $addon_product_id == $product_id ) {
-            if (preg_match('/(\d+)\s*(dagar|månader)/', $product_name, $matches)) {
+            if (preg_match('/(\d+)\s*(dagar|månader)/', $variation_name, $matches)) {
                 $duration   = (int) $matches[1]; 
                 $unit       = $matches[2]; 
                 
                 if ($unit == 'dagar') {
                     $months = ceil($duration / 30);
-                    $product_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $product_name);
+                    $variation_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $variation_name);
                 } elseif ($unit == 'månader') {
-                    $product_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $product_name);
+                    $variation_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $variation_name);
                 }
             }
         }
@@ -469,7 +471,7 @@ function update_table_on_payment_method_change() {
         if ($_product->is_type('variation')) {
             echo '<tr>';
                 echo '<td>Produkt</td>';
-                echo '<td>' . $product_name . '</td>';
+                echo '<td>' . $variation_name . '</td>';
             echo '</tr>';
             echo '<tr>';
                 echo '<td>Quantity</td>';
@@ -505,22 +507,24 @@ echo '<table class="product-table desktop-table">';
         $price              = $variation_product->get_price();
         $product_name       = $_product->get_name();
         $product_id         = $cart_item['product_id'];
+        $variation_data     = $_product->get_variation_attributes();
+        $variation_name     = reset($variation_data);
         if( $addon_product_id == $product_id ) {
-            if (preg_match('/(\d+)\s*(dagar|månader)/', $product_name, $matches)) {
+            if (preg_match('/(\d+)\s*(dagar|månader)/', $variation_name, $matches)) {
                 $duration   = (int) $matches[1]; 
                 $unit       = $matches[2]; 
                 
                 if ($unit == 'dagar') {
                     $months = ceil($duration / 30);
-                    $product_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $product_name);
+                    $variation_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $variation_name);
                 } elseif ($unit == 'månader') {
-                    $product_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $product_name);
+                    $variation_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $variation_name);
                 }
             }
         }
 
         echo '<tr>';
-        echo '<td>' . $product_name . '</td>';
+        echo '<td>' . $variation_name . '</td>';
         echo '<td>';
             echo '<div class="quantity">';
                 echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
