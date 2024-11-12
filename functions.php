@@ -121,53 +121,7 @@ function custom_checkout_columns_start() {
     echo '<div class="checkout-left">';
     echo '<h3>Varukorg</h3>';
     echo "<div class='table-wrapper'>";
-        echo '<table class="product-table mobile-table">';
-            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                $_product           = $cart_item['data'];
-                $variation_id       = $cart_item['variation_id']; 
-                $variation_product  = wc_get_product($variation_id); 
-                $price              = $variation_product->get_price();
-                $product_name       = $_product->get_name();
-                $variation_data     = $_product->get_variation_attributes();
-                $variation_name     = reset($variation_data);
-                $product_id         = $cart_item['product_id'];
-                if( $addon_product_id == $product_id ) {
-                    if (preg_match('/(\d+)\s*(dagar|månader)/', $variation_name, $matches)) {
-                        $duration = (int) $matches[1];
-                        $unit = $matches[2];
-                    
-                        // Modify the product name based on the duration
-                        if ($unit == 'dagar') {
-                            $months = ceil($duration / 30);
-                            $variation_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $variation_name);
-                        } elseif ($unit == 'månader') {
-                            $variation_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $variation_name);
-                        }
-                    }
-                }
-
-                if ($_product->is_type('variation')) {
-                    echo '<tr>';
-                        echo '<td>Produkt</td>';
-                        echo '<td>' . $variation_name . '</td>';
-                    echo '</tr>';
-                    echo '<tr>';
-                        echo '<td>Quantity</td>';
-                        echo '<td>';
-                            echo '<div class="quantity">';
-                            echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
-                            echo '</div>';
-                        echo '</td>';
-                    echo '</tr>';
-                    echo '<tr>';
-                    echo '<td>Pris i SEK</td>';
-                    echo '<td>' . wc_price( $price ) . '</td>';
-                }
-            }
-                
-        echo "</table>";
-
-        echo '<table class="product-table desktop-table">';
+        echo '<table class="product-table">';
             echo '<thead>';
             echo '<tr>';
             echo '<th>Produkt</th>';
@@ -442,106 +396,62 @@ function update_table_on_payment_method_change() {
     $selected_payment_method    = sanitize_text_field($_POST['payment_method']);
     $addon_product_id           = get_option('addon_product');
     $addon_product              = wc_get_product( $addon_product_id );
-    echo '<table class="product-table mobile-table">';
-    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-        $_product           = $cart_item['data'];
-        $variation_id       = $cart_item['variation_id']; 
-        $variation_product  = wc_get_product($variation_id); 
-        $price              = $variation_product->get_price();
-        $product_name       = $_product->get_name();
-        $product_id         = $cart_item['product_id'];
-        $variation_data     = $_product->get_variation_attributes();
-        $variation_name     = reset($variation_data);
-        if( $addon_product_id == $product_id ) {
-            if (preg_match('/(\d+)\s*(dagar|månader)/', $variation_name, $matches)) {
-                $duration   = (int) $matches[1]; 
-                $unit       = $matches[2]; 
-                
-                if ($unit == 'dagar') {
-                    $months = ceil($duration / 30);
-                    $variation_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $variation_name);
-                } elseif ($unit == 'månader') {
-                    $variation_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $variation_name);
-                }
-            }
-        }
 
-        if ($_product->is_type('variation')) {
-            echo '<tr>';
-                echo '<td>Produkt</td>';
-                echo '<td>' . $variation_name . '</td>';
-            echo '</tr>';
-            echo '<tr>';
-                echo '<td>Quantity</td>';
-                echo '<td>';
-                    echo '<div class="quantity">';
-                        echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
-                    echo '</div>';
-                echo '</td>';
-            echo '</tr>';
-            echo '<tr>';
-            echo '<td>Pris i SEK</td>';
-            echo '<td>' . wc_price( $price ) . '</td>';
-        }
-    }
-        
-echo "</table>";
-
-echo '<table class="product-table desktop-table">';
-    echo '<thead>';
-    echo '<tr>';
-    echo '<th>Produkt</th>';
-    echo '<th>Quantity</th>';
-    echo '<th>Pris i SEK</th>';
-    echo "<th></th>";
-    echo '</tr>';
-    echo '</thead>';
-    echo '<tbody>';
-    
-    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-        $_product           = $cart_item['data'];
-        $variation_id       = $cart_item['variation_id']; 
-        $variation_product  = wc_get_product($variation_id); 
-        $price              = $variation_product->get_price();
-        $product_name       = $_product->get_name();
-        $product_id         = $cart_item['product_id'];
-        $variation_data     = $_product->get_variation_attributes();
-        $variation_name     = reset($variation_data);
-        if( $addon_product_id == $product_id ) {
-            if (preg_match('/(\d+)\s*(dagar|månader)/', $variation_name, $matches)) {
-                $duration   = (int) $matches[1]; 
-                $unit       = $matches[2]; 
-                
-                if ($unit == 'dagar') {
-                    $months = ceil($duration / 30);
-                    $variation_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $variation_name);
-                } elseif ($unit == 'månader') {
-                    $variation_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $variation_name);
-                }
-            }
-        }
-
+    echo '<table class="product-table">';
+        echo '<thead>';
         echo '<tr>';
-        echo '<td>' . $variation_name . '</td>';
-        echo '<td>';
-            echo '<div class="quantity">';
-                echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
-            echo '</div>';
-        echo '</td>';
-        echo '<td>' . wc_price( $price ) . '</td>';
-        echo '<td>';
-            echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
-                echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
-            echo '</button>';
-        echo '</td>';
+        echo '<th>Produkt</th>';
+        echo '<th>Quantity</th>';
+        echo '<th>Pris i SEK</th>';
+        echo "<th></th>";
         echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            $_product           = $cart_item['data'];
+            $variation_id       = $cart_item['variation_id']; 
+            $variation_product  = wc_get_product($variation_id); 
+            $price              = $variation_product->get_price();
+            $product_name       = $_product->get_name();
+            $product_id         = $cart_item['product_id'];
+            $variation_data     = $_product->get_variation_attributes();
+            $variation_name     = reset($variation_data);
+            if( $addon_product_id == $product_id ) {
+                if (preg_match('/(\d+)\s*(dagar|månader)/', $variation_name, $matches)) {
+                    $duration   = (int) $matches[1]; 
+                    $unit       = $matches[2]; 
+                    
+                    if ($unit == 'dagar') {
+                        $months = ceil($duration / 30);
+                        $variation_name = preg_replace('/(\d+)\s*dagar/', $months . 'm +ansl', $variation_name);
+                    } elseif ($unit == 'månader') {
+                        $variation_name = preg_replace('/(\d+)\s*månader/', $duration . 'm +ansl', $variation_name);
+                    }
+                }
+            }
+
+            echo '<tr>';
+            echo '<td>' . $variation_name . '</td>';
+            echo '<td>';
+                echo '<div class="quantity">';
+                    echo '<input type="number" class="qty-input" name="cart[' . $cart_item_key . '][qty]" value="' . $cart_item['quantity'] . '" min="1">';
+                echo '</div>';
+            echo '</td>';
+            echo '<td>' . wc_price( $price ) . '</td>';
+            echo '<td>';
+                echo "<button type='button' class='remove-cart' data-cart-item-key='{$cart_item_key}'>";
+                    echo '<img src="https://iptvutanbox.com/wp-content/uploads/2024/08/Group-63.svg">';
+                echo '</button>';
+            echo '</td>';
+            echo '</tr>';
+        }
+
+        echo '</tbody>';
+        echo '</table>';
+        wp_die();
+
     }
-
-    echo '</tbody>';
-    echo '</table>';
-    wp_die();
-
-}
 
 add_filter('body_class', 'add_payment_method_class');
 
@@ -807,8 +717,8 @@ add_action('admin_init', 'register_selected_products_settings');
 
 // Display the main product select field
 function main_product_select_field() {
-    $main_product = get_option('main_product');
-    $products = get_posts(['post_type' => 'product', 'numberposts' => -1]);
+    $main_product   = get_option('main_product');
+    $products       = get_posts(['post_type' => 'product', 'numberposts' => -1]);
     ?>
     <select name="main_product">
         <option value="">Select a Main Product</option>
