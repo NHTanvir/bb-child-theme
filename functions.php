@@ -629,7 +629,6 @@ function add_addon_to_cart() {
         $addon_product              = wc_get_product($addon_product_id);
         $main_available_variations  = $main_product->get_available_variations();
         $addon_available_variations = $addon_product->get_available_variations();
-        $empty_cart                 = true;
 
         foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
             $product_id     = $cart_item['product_id'];
@@ -646,13 +645,12 @@ function add_addon_to_cart() {
                 if( $addon_variation_name == $main_variation_name ) {
                     $matching_variation_id  = $addon_variation_id;
                     $add_product_to_cart    = $addon_product_id;
-                    $empty_cart             = false;
                     break;
                 }  
             }
         }
 
-        if( $empty_cart ) {
+        if( ! $matching_variation_id ) {
             foreach ($main_available_variations as $main_variation) {
                 $main_variation_obj     = wc_get_product($main_variation['variation_id']);
                 $attributes             = $main_variation_obj->get_attributes();
@@ -670,9 +668,6 @@ function add_addon_to_cart() {
 
 
         if ($matching_variation_id) {
-            if( $empty_cart ) {
-                WC()->cart->empty_cart(); 
-            }
   
             $cart_item_key = WC()->cart->add_to_cart($add_product_to_cart, $quantity, $matching_variation_id);
 
