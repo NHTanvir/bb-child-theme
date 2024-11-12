@@ -384,16 +384,14 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
     $description =  $setting['description']; 
     $icon_link      = get_option("{$gateway_id}_icon_link" );
     if ($gateway_id === 'blockonomics') {
-        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">'. $title .'</span><p class="payment-discription">
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><span class="payment-text">'. $title .'<p class="payment-dis">'. $description .'</p></span><p class="payment-discription">
         <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>
-        <p>'. $description .'</p>
         <img src="' . $icon_link . '">
         ';
     } else {
         $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Mastercard.png" alt="Kortbetalning (+10% avgift)" class="card-logo">
-        <span class="payment-text">'. $title .'</span><p class="payment-discription">
+        <span class="payment-text">'. $title .'<p class="payment-dis">'. $description .'</p></span><p class="payment-discription">
         <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-14.png">Direkt</p>
-                <p>'. $description .'</p>
         <img src="' . $icon_link . '">
         ';
     }
