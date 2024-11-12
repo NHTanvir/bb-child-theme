@@ -309,7 +309,7 @@ function custom_checkout_columns_end() {
 
         <h3>Betalning</h3>
         <div class="payment-methods-section">
-            <h6 class="method">Payment Method</h6>
+            <h6 class="method">Metod</h6>
     <?php
 
     if (function_exists('woocommerce_checkout_payment')) {
@@ -355,7 +355,7 @@ function add_custom_payment_message() {
                 echo "Kortavgift";
             echo '</div>';
             echo '<div class="fee-price">';
-                echo "10%";
+                echo "69 SEK";
             echo '</div>';
         echo '</div>';
         echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png"><span>Med detta alternativ genomförs transaktionen i valutan $ (Dollar). Du köper USDC som sedan skickas till oss per automatik.<br/><br/><strong>Om detta betalningsalternativ inte fungerar för dig så kan du skapa en ny order och välja något av våra andra alternativ.</strong></span></p><a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a>';
