@@ -301,7 +301,6 @@ function add_custom_payment_message() {
    
     echo '<a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a></div>';
 
-    // Normal Payment Message
     echo '<div class="blockonomics-payments-info" style="'.$bit_style.'">'; // Changed class name for clarity
         echo '<h6 class="method">Total avgifter</h6>';
         echo '<div class="fee-table">';
