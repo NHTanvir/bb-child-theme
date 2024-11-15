@@ -188,7 +188,6 @@ function custom_checkout_columns_start() {
     $matching_variation_name    = '';
     $main_product               = get_option('main_product');
     
-    // Check if the main product is in the cart
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         if ($cart_item['product_id'] == $main_product) {
             $product_in_cart = true;
