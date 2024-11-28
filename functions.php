@@ -111,6 +111,8 @@ remove_action('woocommerce_checkout_order_review', 'woocommerce_checkout_payment
 remove_action('woocommerce_checkout_order_review', 'woocommerce_order_review', 10); 
 remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10); 
 
+
+//Rearrange column move our tbale to first position left side data
 function custom_checkout_columns_start() {
 
     $selected_payment_method = WC()->session->get('chosen_payment_method');
@@ -257,6 +259,7 @@ function custom_checkout_columns_start() {
     echo '</div>'; 
 }
 
+//Rearrange column move paymentr method to the right
 function custom_checkout_columns_end() {
     ?>
     <div class="checkout-right">
@@ -275,6 +278,7 @@ function custom_checkout_columns_end() {
 
 }
 
+add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
 function add_custom_payment_message() {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
 
@@ -316,7 +320,8 @@ function add_custom_payment_message() {
     echo '</div>';
     echo '</div>';
 }
-add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
+
+//Render coupon field
 function custom_coupon_form() {
     ?>
     <div class="coupon" id="coupon-section">
@@ -327,6 +332,8 @@ function custom_coupon_form() {
     </div>
     <?php
 }
+
+//customzie payemnt options add title,description,bitcoin,card icon and out custom image link 
 
 add_filter('woocommerce_gateway_icon', 'custom_payment_gateway_icon', 30, 2);
 
@@ -353,7 +360,7 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
     return $icon;
 }
 
-
+//when user changes payemnt method use ajax and js to update the below total table data
 add_action('wp_ajax_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
 add_action('wp_ajax_nopriv_update_cart_totals_on_payment_method_change', 'update_cart_totals_on_payment_method_change');
 
@@ -388,7 +395,7 @@ function update_cart_totals_on_payment_method_change() {
     }
     wp_die();
 }
-
+//when user changes payemnt method use ajax and js to update the above whole total data
 add_action('wp_ajax_update_table_on_payment_method_change', 'update_table_on_payment_method_change');
 add_action('wp_ajax_nopriv_update_table_on_payment_method_change', 'update_table_on_payment_method_change');
 
@@ -453,6 +460,8 @@ function update_table_on_payment_method_change() {
 
     }
 
+//add class to body bsaed on paymen method selection for css designing purpose
+
 add_filter('body_class', 'add_payment_method_class');
 
 function add_payment_method_class($classes) {
@@ -465,7 +474,7 @@ function add_payment_method_class($classes) {
     return $classes;
 }
 
-
+//change place order button text based on payment method change
 add_filter('woocommerce_order_button_text', 'custom_woocommerce_order_button_text', 9999999999);
 
 function custom_woocommerce_order_button_text($button_text) {
@@ -483,6 +492,8 @@ function custom_woocommerce_order_button_text($button_text) {
     return $button_text;
 }
 
+//Add custom field on payment method setting to add custom icon
+
 add_filter('woocommerce_get_settings_checkout', 'add_custom_field_to_gateway', 10, 2);
 
 function add_custom_field_to_gateway($settings, $current_section) {
@@ -498,6 +509,7 @@ function add_custom_field_to_gateway($settings, $current_section) {
     return $settings;
 }
 
+//when user changes quantatity update the quantatity and total on backend 
 add_action('wp_ajax_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
 add_action('wp_ajax_nopriv_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
 
@@ -513,6 +525,7 @@ function woocommerce_update_cart_item_qty() {
     wp_die();
 }
 
+//loder modal which shows during loading
 add_action( 'wp_footer', 'modal' );
 function modal() {
     echo '
@@ -520,6 +533,8 @@ function modal() {
         <img id="plugin-client-modal-loader" src="' . esc_attr( get_stylesheet_directory_uri() . '/images/loader.gif' ) . '" />
     </div>';
 }
+
+//custom add to cart based on addon product selection
 add_action('wp_ajax_add_addon_to_cart', 'add_addon_to_cart');
 add_action('wp_ajax_nopriv_add_addon_to_cart', 'add_addon_to_cart');
 
@@ -597,6 +612,7 @@ function add_addon_to_cart() {
     wp_die();
 }
 
+//remove porduct from cart ajax
 add_action('wp_ajax_remove_cart_item', 'remove_cart_item');
 add_action('wp_ajax_nopriv_remove_cart_item', 'remove_cart_item');
 
@@ -611,7 +627,7 @@ function remove_cart_item() {
     wp_die(); // Terminate and return proper response
 }
 
-// Step 1: Save custom data as order meta when order is created
+// Save custom data as order meta when order is created
 add_action('woocommerce_checkout_create_order_line_item', 'save_custom_data_to_order_meta', 10, 4);
 function save_custom_data_to_order_meta($item, $cart_item_key, $values, $order) {
     if (isset($values['addon_option'])) {
@@ -624,14 +640,13 @@ function save_custom_data_to_order_meta($item, $cart_item_key, $values, $order) 
 }
 
 
-// Step 2: Display custom meta data in admin order view
+//Display custom meta data in admin order view
 add_action('woocommerce_before_order_itemmeta', 'display_custom_order_item_meta_in_admin', 10, 3);
 function display_custom_order_item_meta_in_admin($item_id, $item, $order) {
     // Get addon_option and mac_address for each line item
     $addon_option = $item->get_meta('addon_option');
     $mac_address = $item->get_meta('mac_address');
 
-    // Display Addon Option if it exists
     if ($addon_option) {
         echo '<p><strong>Addon Option:</strong> ' . esc_html($addon_option) . '</p>';
     }
