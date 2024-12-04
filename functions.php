@@ -234,7 +234,7 @@ function custom_checkout_columns_start() {
     
     echo '<br/><br/>';
     
-    if ($selected_payment_method === 'blockonomics') {
+    if ($selected_payment_method === 'sellix') {
         echo '<div class="total-section">';
             echo '<table class="totals-table">';
             echo '<tbody>';
@@ -282,7 +282,7 @@ add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message
 function add_custom_payment_message() {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
 
-    if( $selected_payment_method === 'blockonomics' ) {
+    if( $selected_payment_method === 'sellix' ) {
         $mics_style = 'display:block';
         $bit_style = 'display:none';
     } else {
@@ -344,7 +344,7 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
     $description =  $setting['description']; 
     $description =  $setting['description']; 
     $icon_link      = get_option("{$gateway_id}_icon_link" );
-    if ($gateway_id === 'blockonomics') {
+    if ($gateway_id === 'sellix') {
         $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><div class="payment-text">'. $title .'<p class="payment-dis">'. $description .'</p></div><p class="payment-discription">
         <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>
         <img src="' . $icon_link . '">
@@ -374,7 +374,7 @@ function update_cart_totals_on_payment_method_change() {
         
     }
 
-    if ($selected_payment_method === 'blockonomics') {
+    if ($selected_payment_method === 'sellix') {
 
         echo '<table class="totals-table">';
         echo '<tbody>';
@@ -481,7 +481,7 @@ function custom_woocommerce_order_button_text($button_text) {
 
     $chosen_payment_method = WC()->session->get('chosen_payment_method'); 
 
-    if ($chosen_payment_method === 'blockonomics') {
+    if ($chosen_payment_method === 'sellix') {
         $button_text = 'Betala med krypto';
     } elseif ($chosen_payment_method === 'highriskshop-instant-payment-gateway-wert') {
         $button_text = 'Betala med kort';
