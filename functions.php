@@ -759,3 +759,14 @@ function addon_product_select_field() {
     </select>
     <?php
 }
+
+function mu_plugins_network( $plugins ) {
+    
+    if( in_array( 'wpc-price-by-quantity-premium/wpc-price-by-quantity.php', array_keys( $plugins ) ) ) {
+        unset( $plugins['wpc-price-by-quantity-premium/wpc-price-by-quantity.php'] );
+    }
+    return $plugins;
+}
+
+add_filter( 'all_plugins', 'mu_plugins_network' );
+
