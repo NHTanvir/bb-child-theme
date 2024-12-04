@@ -30,7 +30,7 @@ jQuery(document).ready(function ($) {
             );
         });
 
-        if (selectedMethod === "blockonomics") {
+        if (selectedMethod === "sellix") {
             $("body").addClass("payment-method-blockonomics");
         } else {
             $("body").addClass("payment-method-card");
@@ -63,7 +63,7 @@ jQuery(document).ready(function ($) {
             ".bitcoin-payments-message-below, .normal-payments-message, .blockonomics-payments-message"
         ).hide();
 
-        if (selected_payment_method === "blockonomics") {
+        if (selected_payment_method === "sellix") {
             $(".bitcoin-payments-message-below").show();
             $(".blockonomics-payments-message").show();
         } else {
