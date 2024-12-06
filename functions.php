@@ -210,8 +210,7 @@ function custom_checkout_columns_start() {
         echo '</select>';
     
         echo '<select name="addon_variation" class="addon-variation-select">';
-        
-
+	    
         if ($product_in_cart) {
 
             foreach ($available_variations as $variation) {
