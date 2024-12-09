@@ -232,25 +232,36 @@ function custom_checkout_columns_start() {
     echo '</div>';
     
     echo '<br/><br/>';
-    
-    if ($selected_payment_method === 'sellix') {
+    if( $selected_payment_method ) {
+        if ($selected_payment_method === 'sellix') {
+            echo '<div class="total-section">';
+                echo '<table class="totals-table">';
+                echo '<tbody>';
+                echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+                echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
+                echo '</tbody>';
+                echo '</table>';
+            echo '</div>';
+        } else {
+            echo '<div class="total-section">';
+                echo '<table class="totals-table">';
+                echo '<tbody>';
+                echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+                echo '<tr><td>Kortavgift - 10%</td><td>' . do_shortcode('[total-fee-sek]') . '</td></tr>'; 
+                echo '<tr><td>Totalt</td><td>' . do_shortcode('[total-price-eur]') . '</td></tr>';
+                echo '</tbody>';
+                echo '</table>';
+            echo '</div>';
+        }
+    }
+    else{
         echo '<div class="total-section">';
-            echo '<table class="totals-table">';
-            echo '<tbody>';
-            echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-            echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
-            echo '</tbody>';
-            echo '</table>';
-        echo '</div>';
-    } else {
-        echo '<div class="total-section">';
-            echo '<table class="totals-table">';
-            echo '<tbody>';
-            echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-            echo '<tr><td>Kortavgift - 10%</td><td>' . do_shortcode('[total-fee-sek]') . '</td></tr>'; 
-            echo '<tr><td>Totalt</td><td>' . do_shortcode('[total-price-eur]') . '</td></tr>';
-            echo '</tbody>';
-            echo '</table>';
+        echo '<table class="totals-table">';
+        echo '<tbody>';
+        echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
+        echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
+        echo '</tbody>';
+        echo '</table>';
         echo '</div>';
     }
     custom_coupon_form();   
