@@ -470,6 +470,21 @@ function add_custom_field_to_gateway($settings, $current_section) {
     return $settings;
 }
 
+add_filter('woocommerce_get_settings_checkout', 'add_crypto_checkbox', 10, 2);
+
+function add_crypto_checkbox($settings, $current_section) {
+        $settings[] = array(
+            'title'    => __('Make this Crypto', 'woocommerce'),
+            'desc'     => __('Based on it checkout crypto functionality will work.'),
+            'id'       => "{$current_section}_crypto_check",
+            'type'     => 'checkbox',
+            'default'  => '',
+            'desc_tip' => true,
+        );
+
+    return $settings;
+}
+
 //when user changes quantatity update the quantatity and total on backend 
 add_action('wp_ajax_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
 add_action('wp_ajax_nopriv_woocommerce_update_cart_item_qty', 'woocommerce_update_cart_item_qty');
