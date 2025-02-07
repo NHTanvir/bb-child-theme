@@ -185,7 +185,8 @@ function custom_checkout_columns_start() {
     
     echo '<br/><br/>';
     if( $selected_payment_method ) {
-        if ($selected_payment_method === 'sellix') {
+        $cyrpto_check = get_option( "{$selected_payment_method}_crypto_check" );
+        if ($cyrpto_check === 'yes') {
             echo '<div class="total-section">';
                 echo '<table class="totals-table">';
                 echo '<tbody>';
@@ -241,8 +242,8 @@ function custom_checkout_columns_end() {
 add_action('woocommerce_review_order_before_submit', 'add_custom_payment_message');
 function add_custom_payment_message() {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
-
-    if( $selected_payment_method === 'sellix' ) {
+    $cyrpto_check               = get_option( "{$selected_payment_method}_crypto_check" );
+    if( $cyrpto_check == 'yes' ) {
         $mics_style = 'display:block';
         $bit_style = 'display:none';
     } else {
@@ -304,7 +305,8 @@ function custom_payment_gateway_icon($icon, $gateway_id) {
     $description =  $setting['description']; 
     $description =  $setting['description']; 
     $icon_link      = get_option("{$gateway_id}_icon_link" );
-    if ($gateway_id === 'sellix') {
+    $cyrpto_check          = get_option( "{$gateway_id}_crypto_check" );
+    if ($cyrpto_check == 'yes') {
         $icon = '<img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Icon-awesome-btc.png" alt="Bitcoin" class="bit-coin-logo" style="margin: 0px 10px !important;"><div class="payment-text">'. $title .'<p class="payment-dis">'. $description .'</p></div><p class="payment-discription">
         <img src="https://iptvutanbox.com/wp-content/uploads/2024/09/Vector-15.png">10-60 min</p>
         <img src="' . $icon_link . '">
@@ -327,14 +329,14 @@ add_action('wp_ajax_nopriv_update_cart_totals_on_payment_method_change', 'update
 function update_cart_totals_on_payment_method_change() {
 
     $selected_payment_method = sanitize_text_field($_POST['payment_method']);
-
+    $cyrpto_check               = get_option( "{$selected_payment_method}_crypto_check" );
     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
         $_product = $cart_item['data'];
         $product_name = $_product->get_name();
         
     }
 
-    if ($selected_payment_method === 'sellix') {
+    if ($cyrpto_check == 'yes') {
 
         echo '<table class="totals-table">';
         echo '<tbody>';
@@ -425,9 +427,15 @@ add_filter('body_class', 'add_payment_method_class');
 
 function add_payment_method_class($classes) {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
-
+    $cyrpto_check               = get_option( "{$selected_payment_method}_crypto_check" );
     if ($selected_payment_method) {
-        $classes[] = 'payment-method-' . esc_attr($selected_payment_method);
+        if( $cyrpto_check == 'yes' ) {
+            $classes[] = 'payment-method-crypto';
+        }
+        else{
+            $classes[] = 'payment-method-' . esc_attr($selected_payment_method);
+        }
+
     }
 
     return $classes;
@@ -439,8 +447,9 @@ add_filter('woocommerce_order_button_text', 'custom_woocommerce_order_button_tex
 function custom_woocommerce_order_button_text($button_text) {
 
     $chosen_payment_method = WC()->session->get('chosen_payment_method'); 
+    $cyrpto_check          = get_option( "{$chosen_payment_method}_crypto_check" );
 
-    if ($chosen_payment_method === 'sellix') {
+    if ($cyrpto_check === 'yes') {
         $button_text = 'Betala med krypto';
     } elseif ($chosen_payment_method === 'highriskshop-instant-payment-gateway-wert') {
         $button_text = 'Betala med kort';
