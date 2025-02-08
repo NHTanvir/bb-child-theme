@@ -18,9 +18,20 @@ jQuery(document).ready(function ($) {
         $('input[name="payment_method"]:checked')
             .closest("li")
             .addClass("payment-active");
-    }
 
+        $(".wc_payment_methods li").each(function () {
+            var paymentType = $(this).find('img[data-payment]').attr('data-payment');
+    
+            if (paymentType === "crypto") {
+                $(this).addClass("payment-type-blockchain");
+            } else if (paymentType) {
+                $(this).addClass("payment-type-card");
+            }
+        });
+    }
+    
     function updateBodyClass() {
+        
         var selectedMethod = $('input[name="payment_method"]:checked').closest('li').find('img[data-payment]').attr('data-payment');
     
         // Remove previous payment method body classes
@@ -35,6 +46,7 @@ jQuery(document).ready(function ($) {
         }
     }
     
+
 
     updateBodyClass();
 
