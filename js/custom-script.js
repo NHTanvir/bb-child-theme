@@ -21,21 +21,20 @@ jQuery(document).ready(function ($) {
     }
 
     function updateBodyClass() {
-        var selectedMethod = $('input[name="payment_method"]:checked').val();
-
+        var selectedMethod = $('input[name="payment_method"]:checked').closest('li').find('img[data-payment]').attr('data-payment');
+    
         // Remove previous payment method body classes
         $("body").removeClass(function (index, className) {
-            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(
-                " "
-            );
+            return (className.match(/(^|\s)payment-method-\S+/g) || []).join(" ");
         });
-
+    
         if (selectedMethod === "crypto") {
             $("body").addClass("payment-method-blockonomics");
         } else {
             $("body").addClass("payment-method-card");
         }
     }
+    
 
     updateBodyClass();
 
