@@ -427,7 +427,6 @@ add_filter('body_class', 'add_payment_method_class');
 
 function add_payment_method_class($classes) {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
-    update_option('selected_payment_method', $selected_payment_method);
     $cyrpto_check               = get_option( "{$selected_payment_method}_crypto_check" );
     if ($selected_payment_method) {
         if( $cyrpto_check == 'yes' ) {
