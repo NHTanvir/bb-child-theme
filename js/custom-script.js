@@ -49,6 +49,7 @@ jQuery(document).ready(function ($) {
 
 
     updateBodyClass();
+    updatePaymentMethodClass();
 
     // Change event to update class when payment method is changed
     $("form.woocommerce-checkout").on(
@@ -61,7 +62,7 @@ jQuery(document).ready(function ($) {
     );
 
     $(document.body).on("updated_checkout", function () {
-        // Reapply the class to the selected payment method
+       updateBodyClass();
         updatePaymentMethodClass();
     });
 
