@@ -427,6 +427,7 @@ add_filter('body_class', 'add_payment_method_class');
 
 function add_payment_method_class($classes) {
     $selected_payment_method = WC()->session->get('chosen_payment_method');
+    update_option('selected_payment_method', $selected_payment_method);
     $cyrpto_check               = get_option( "{$selected_payment_method}_crypto_check" );
     if ($selected_payment_method) {
         if( $cyrpto_check == 'yes' ) {
@@ -753,3 +754,14 @@ function mu_plugins_network( $plugins ) {
 
 add_filter( 'all_plugins', 'mu_plugins_network' );
 
+add_action('woocommerce_before_checkout_form', 'set_default_payment_method', 10);
+
+function set_default_payment_method() {
+    if (!WC()->session->get('chosen_payment_method')) {
+        $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+        if (!empty($available_gateways)) {
+            $first_gateway = current($available_gateways);
+            WC()->session->set('chosen_payment_method', $first_gateway->id);
+        }
+    }
+}
